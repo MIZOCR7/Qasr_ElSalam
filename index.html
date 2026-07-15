@@ -1524,7 +1524,6 @@
     <p class="brand" data-i18n="brandName">قصر السلام للمشويات</p>
     <p data-i18n="footerAddress">مدينة السادات - المنطقة الثامنة - أمام محكمة الأسرة</p>
     <p style="margin-top:8px;" data-i18n="footerCopy">&copy; 2026 جميع الحقوق محفوظة</p>
-    <p style="margin-top:6px;"><a href="admin.html" style="color:var(--text-sec);font-size:0.78rem;text-decoration:none;opacity:0.4;">🔐 لوحة الإدارة</a></p>
   </footer>
 
   <!-- BACK TO TOP -->
@@ -1675,7 +1674,7 @@
       document.body.className = document.body.className.replace(/lang-en|lang-ar/g, '') + ' lang-' + lang;
       const navList = document.querySelector('.nav-list');
       if (navList) navList.style.direction = lang === 'ar' ? 'rtl' : 'ltr';
-      if (menuData) renderFullMenu(menuData);
+      if (menuData && menuData.menu) renderFullMenu(menuData.menu);
     }
 
     function toggleLang() {
@@ -1913,7 +1912,7 @@
 
     // ===== TAB-BASED FULL MENU =====
     function renderFullMenu(data) {
-      menuData = data;
+      var menuArray = data;
       const tabsContainer = document.getElementById('menuCatTabs');
       const panel = document.getElementById('menuItemsPanel');
       if (!tabsContainer || !panel) return;
@@ -1922,7 +1921,7 @@
       let activeIdx = 0;
       function showCategory(idx) {
         activeIdx = idx;
-        const cat = data[idx];
+        const cat = menuArray[idx];
         const origName = cat.category || cat.name || '';
         const tKey = getCatTranslationKey(idx, origName);
         const translatedName = (tKey && t[tKey]) ? t[tKey] : origName;
@@ -1943,7 +1942,7 @@
         ).join('') + '</div>';
         observeNew();
       }
-      tabsContainer.innerHTML = data.map((cat, i) => {
+      tabsContainer.innerHTML = menuArray.map((cat, i) => {
         const origName = cat.category || cat.name || '';
         const tKey = getCatTranslationKey(i, origName);
         const translatedName = (tKey && t[tKey]) ? t[tKey] : origName;
@@ -1999,6 +1998,7 @@
     const counterRef = db.ref('clicks_counter');
     const menuRef = db.ref('menu');
     const winnersRef = db.ref('winners');
+    const cooldownRef = db.ref('last_click_timestamp');
 
     // --- Dynamic Menu Connection ---
     menuRef.once('value').then((snapshot) => {
@@ -2079,11 +2079,27 @@
     const LS_KEY = 'luck_last_click';
     const COOLDOWN = 24 * 60 * 60 * 1000; // 24 hours
 
-    function checkCoolDown() {
-      var last = localStorage.getItem(LS_KEY);
-      if (!last) return 0;
-      var elapsed = Date.now() - parseInt(last, 10);
-      return elapsed >= COOLDOWN ? 0 : COOLDOWN - elapsed;
+    function checkCoolDown(callback) {
+      var localLast = localStorage.getItem(LS_KEY);
+      var localRemaining = localLast ? Math.max(0, COOLDOWN - (Date.now() - parseInt(localLast, 10))) : 0;
+      // Also check Firebase for the authoritative timestamp
+      cooldownRef.once('value').then(function(snap) {
+        var fbLast = snap.val();
+        if (fbLast) {
+          var fbRemaining = Math.max(0, COOLDOWN - (Date.now() - fbLast));
+          // Use the larger remaining time (most restrictive)
+          var remaining = Math.max(localRemaining, fbRemaining);
+          // Sync localStorage to Firebase timestamp if Firebase is more restrictive
+          if (fbRemaining > localRemaining) {
+            localStorage.setItem(LS_KEY, String(fbLast));
+          }
+          callback(remaining);
+        } else {
+          callback(localRemaining);
+        }
+      }).catch(function() {
+        callback(localRemaining);
+      });
     }
 
     function formatRemaining(ms) {
@@ -2100,22 +2116,23 @@
     }
 
     function updateUI() {
-      var remaining = checkCoolDown();
-      if (remaining > 0) {
-        btn.disabled = true;
-        msg.className = 'luck-msg';
-        msg.innerHTML =
-          '<div class="luck-wait-card">' +
-            '<div class="luck-wait-icon">⏳</div>' +
-            '<div class="luck-wait-txt">مع الأسف، خلصت محاولتك!</div>' +
-            '<div class="luck-wait-sub">جرب تاني بعد ما العداد يخلص</div>' +
-            '<div class="luck-wait-countdown">' + formatRemaining(remaining) + '</div>' +
-          '</div>';
-      } else {
-        btn.disabled = false;
-        msg.className = 'luck-msg';
-        msg.innerHTML = '';
-      }
+      checkCoolDown(function(remaining) {
+        if (remaining > 0) {
+          btn.disabled = true;
+          msg.className = 'luck-msg';
+          msg.innerHTML =
+            '<div class="luck-wait-card">' +
+              '<div class="luck-wait-icon">⏳</div>' +
+              '<div class="luck-wait-txt">مع الأسف، خلصت محاولتك!</div>' +
+              '<div class="luck-wait-sub">جرب تاني بعد ما العداد يخلص</div>' +
+              '<div class="luck-wait-countdown">' + formatRemaining(remaining) + '</div>' +
+            '</div>';
+        } else {
+          btn.disabled = false;
+          msg.className = 'luck-msg';
+          msg.innerHTML = '';
+        }
+      });
     }
 
     // Run initial check and refresh every second
@@ -2138,7 +2155,7 @@
     }
 
     btn.addEventListener('click', function() {
-      var remaining = checkCoolDown();
+      checkCoolDown(function(remaining) {
       if (remaining > 0) {
         updateUI();
         return;
@@ -2168,18 +2185,20 @@
         }
         
         var count = snap.val();
-        localStorage.setItem(LS_KEY, String(Date.now())); // Start cooldown
+        var nowTs = Date.now();
+        localStorage.setItem(LS_KEY, String(nowTs)); // Start cooldown
+        cooldownRef.set(nowTs); // Also save to Firebase
         var isWin = (count % 100 === 0);
 
         // GENERATE COUPON DATA
         var chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
         var rand = '';
         for (var i = 0; i < 4; i++) rand += chars[Math.floor(Math.random() * chars.length)];
-        var now = new Date();
-        var dd = String(now.getDate()).padStart(2,'0');
-        var mm = String(now.getMonth()+1).padStart(2,'0');
-        var yyyy = now.getFullYear();
-        var exp = new Date(now.getTime() + 7 * 24 * 60 * 60 * 1000);
+        var nowDate = new Date();
+        var dd = String(nowDate.getDate()).padStart(2,'0');
+        var mm = String(nowDate.getMonth()+1).padStart(2,'0');
+        var yyyy = nowDate.getFullYear();
+        var exp = new Date(nowTs + 7 * 24 * 60 * 60 * 1000);
         var expD = String(exp.getDate()).padStart(2,'0');
         var expM = String(exp.getMonth()+1).padStart(2,'0');
         var expY = exp.getFullYear();
@@ -2193,7 +2212,7 @@
           hideLoading(tickInterval);
           if (isWin) {
             playWinSound();
-            window._pendingCoupon = { code: code, discount: discount, date: dateStr, expiry: expStr, timestamp: now.getTime() };
+            window._pendingCoupon = { code: code, discount: discount, date: dateStr, expiry: expStr, timestamp: nowTs };
             document.getElementById('winnerNameInput').value = '';
             document.getElementById('nameErr').textContent = '';
             document.getElementById('nameOverlay').classList.add('open');
@@ -2211,6 +2230,7 @@
             updateUI();
           }
         }, 2200);
+      });
       });
     });
 
