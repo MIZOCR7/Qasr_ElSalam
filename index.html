@@ -522,6 +522,30 @@
     .back-top.visible{opacity:1;visibility:visible}
     .back-top:hover{transform:translateY(-3px);box-shadow:0 4px 25px rgba(220,38,38,0.5)}
 
+    /* ===== TRY YOUR LUCK ===== */
+    .luck-section{text-align:center;padding:50px 20px;background:var(--charcoal-2)}
+    .luck-section .luck-box{
+      max-width:550px;margin:0 auto;
+      background:var(--charcoal-3);border:1px solid var(--border-med);
+      border-radius:16px;padding:40px 30px;
+    }
+    .luck-section .luck-box h3{font-size:1.3rem;color:#fff;margin-bottom:8px}
+    .luck-section .luck-box p{color:var(--text-sec);font-size:0.9rem;margin-bottom:25px;line-height:1.7}
+    .luck-section .luck-box .btn-luck{
+      display:inline-flex;align-items:center;gap:10px;
+      padding:16px 38px;border:none;border-radius:50px;
+      font-family:var(--font-base);font-size:1.05rem;font-weight:700;cursor:pointer;
+      background:linear-gradient(135deg,var(--grill-red),#b91c1c);
+      color:#fff;transition:all 0.35s;position:relative;overflow:hidden;
+    }
+    .luck-section .luck-box .btn-luck:hover{transform:translateY(-3px);box-shadow:0 8px 30px rgba(220,38,38,0.35)}
+    .luck-section .luck-box .btn-luck:disabled{opacity:0.5;cursor:not-allowed;transform:none;box-shadow:none}
+    .luck-section .luck-box .luck-msg{margin-top:18px;font-size:0.95rem;font-weight:700;min-height:28px;direction:rtl}
+    .luck-section .luck-box .luck-msg.win{color:#22c55e}
+    .luck-section .luck-box .luck-msg.lose{color:var(--grill-red)}
+    .luck-section .luck-box .luck-msg.wait{color:var(--gold)}
+    @media(max-width:480px){.luck-section{padding:30px 16px}.luck-section .luck-box{padding:30px 20px}}
+
     /* ===== LOCATION SECTION ===== */
     .location-section{background:var(--charcoal);padding:0;overflow:hidden}
     .location-wrapper{
@@ -1303,6 +1327,16 @@
     </div>
   </section>
 
+  <!-- TRY YOUR LUCK -->
+  <section class="luck-section">
+    <div class="luck-box reveal">
+      <h3>🎡 جرب حظك واكسب خصم!</h3>
+      <p>اضغط على الزر وجرب حظك — ممكن تكسب كود خصم 50% على طلبك!<br>فرصة واحدة كل 24 ساعة</p>
+      <button class="btn-luck" id="luckBtn">🎰 جرب حظك</button>
+      <div class="luck-msg" id="luckMsg"></div>
+    </div>
+  </section>
+
   <!-- FOOTER -->
   <footer>
     <div class="social-links">
@@ -1618,8 +1652,8 @@
     }
 
     var menuData = {"menu":[{"category":"الولائم والمناسبات","items":[{"name":"صينية العائلة الكبيرة","description":"كيلو كفتة - فرخة ونص شيش - 3/4 كباب - ربع طرب - ثلاثة ارز معمر - اتنين ملوخية السلطات والعيش","price":"2350 جنيه"},{"name":"صينية العائلة الوسط","description":"نص كفتة - فرخة شيش - ثلث كباب - ربع طرب - ارز معمر - اتنين ملوخية - السلطات والعيش","price":"1300 جنيه"},{"name":"ميكس قصر السلام العائلي","description":"نص فرخة - نص كفتة - نص كباب - ربع طرب - ربع شيش - ارز معمر - اتنين ملوخية - السلطات","price":"1300 جنيه"}]},{"category":"الساندوتشات","items":[{"name":"بطاطس","price":"120 جنيه"},{"name":"حواوشي بلدي","price":"120 جنيه"},{"name":"كفتة","price":"120 جنيه"},{"name":"كبدة اسكندراني","price":"120 جنيه"},{"name":"شيش طاووق","price":"120 جنيه"}]},{"category":"السلطات","items":[{"name":"سلطة طحينة","price":"20 جنيه"},{"name":"سلطة بلدي","price":"20 جنيه"},{"name":"بابا غنوج","price":"20 جنيه"},{"name":"طماطم متبلة","price":"20 جنيه"},{"name":"سلطة كولسلو","price":"20 جنيه"}]},{"category":"الأرز والمكرونة","items":[{"name":"أرز معمر","price":"40 جنيه"},{"name":"أرز بسمتي","price":"40 جنيه"},{"name":"أرز بالشعرية","price":"25 جنيه"},{"name":"أرز بسمتي بالمكسرات","price":"45 جنيه"},{"name":"طبق ورق عنب","price":"60 جنيه"},{"name":"مكرونة بشاميل","price":"50 جنيه"},{"name":"مكرونة نجرسكو","price":"50 جنيه"},{"name":"مكرونة لحمة","price":"70 جنيه"},{"name":"مكرونة فراخ","price":"70 جنيه"},{"name":"مكرونة وايت صوص","price":"70 جنيه"},{"name":"مكرونة صوص أحمر سادة","price":"50 جنيه"},{"name":"اسباجتي لحم","price":"70 جنيه"},{"name":"ميكس محاشي","price":"60 جنيه"}]},{"category":"الكريب","items":[{"name":"كريب فاهيتا","price":"80 جنيه"},{"name":"كريب كرسبي","price":"80 جنيه"},{"name":"كريب شيش","price":"80 جنيه"},{"name":"تشيكن ميكس","price":"80 جنيه"},{"name":"كريب زنجر","price":"80 جنيه"},{"name":"كريب كفتة","price":"80 جنيه"},{"name":"كريب برجر","price":"70 جنيه"},{"name":"كريب بطاطس","price":"60 جنيه"},{"name":"كريب مكس جبن","price":"80 جنيه"},{"name":"كريب موزاريلا","price":"80 جنيه"},{"name":"كريب كبدة","price":"70 جنيه"},{"name":"كريب نوتيلا","price":"50 جنيه"},{"name":"كريب نوتيلا موز","price":"60 جنيه"},{"name":"كريب قصر السلام","price":"85 جنيه"},{"name":"إضافة جبن","price":"10 جنيه"},{"name":"إضافة بطاطس","price":"10 جنيه"},{"name":"إضافة موزاريلا","price":"10 جنيه"},{"name":"باكت بطاطس","price":"15 جنيه"}]},{"category":"طواجن القصر","items":[{"name":"طاجن لحم بالخضار + أرز","description":"بامية او فاصوليا او مشكل او بطاطس","price":"250 جنيه"},{"name":"طاجن كباب حلة + أرز","price":"250 جنيه"},{"name":"طاجن كوارع + أرز","price":"240 جنيه"},{"name":"طاجن عكاوي + أرز","price":"240 جنيه"},{"name":"طاجن كوارع + ورق عنب","price":"250 جنيه"},{"name":"طاجن بامية سادة","price":"40 جنيه"},{"name":"طاجن فاصوليا سادة","price":"30 جنيه"},{"name":"طاجن ملوخية","price":"40 جنيه"},{"name":"طاجن خضار مشكل","price":"25 جنيه"}]},{"category":"الشوربة","items":[{"name":"شوربة لسان عصفور","price":"20 جنيه"},{"name":"شوربة فراخ كريمي","price":"60 جنيه"},{"name":"شوربة مشروم كريمي","price":"60 جنيه"},{"name":"شوربة كوارع","price":"60 جنيه"},{"name":"شوربة حمام","price":"70 جنيه"}]},{"category":"الوجبات الرئيسية","items":[{"name":"ميكس جريل","description":"ربع فرخة -تمن كفتة - تمن كباب - تمن طرب - تمن شيش طاووق","price":"450 جنيه"},{"name":"ميكس قصر السلام العائلي","description":"نص فرخة - نص كفتة - نص كباب - ربع طرب - ربع شيش","price":"1300 جنيه"},{"name":"وجبة القصر","description":"ربع فرخة - تمن كفتة - أرز - بسلة - السلطة والعيش","price":"185 جنيه"},{"name":"وجبة كرسبي القصر","description":"ثلاث قطع كرسبي - أرز بسمتي - السلطة والعيش + بطاطس بونفريت","price":"150 جنيه"},{"name":"وجبة بانية","description":"ثلاث قطع بانيه - أرز بسمتي - السلطة والعيش + بطاطس بونفريت","price":"150 جنيه"},{"name":"وجبة الحمام","description":"فرد حمام محشي - ربع فرخه - تمن كفته - ارز بسمتي","price":"345 جنيه"},{"name":"وجبة ربع فراخ","description":"ربع فراخ - الارز والخضار - السلطه و العيش","price":"130 جنيه"},{"name":"وجبة ربع فراخ صدر","description":"ربع فراخ - الارز والخضار - السلطه و العيش","price":"140 جنيه"},{"name":"وجبة نصف دجاج","description":"نص فراخ - الارز والخضار - السلطه و العيش","price":"220 جنيه"},{"name":"موزة ضاني","price":"500 جنيه"},{"name":"موزة بتلو","price":"480 جنيه"},{"name":"وجبة القصر صدر","price":"190 جنيه"},{"name":"وجبة ربع فراخ صدر على الفحم","price":"140 جنيه"}]},{"category":"اللحوم","items":[{"name":"كفتة ضاني","price":"ربع / تلت / نص / كيلو"},{"name":"كفتة كندوز","price":"ربع / تلت / نص / كيلو"},{"name":"طرب ضاني","price":"ربع / تلت / نص / كيلو"},{"name":"كباب ضاني","price":"ربع / تلت / نص / كيلو"},{"name":"ريش ضاني","price":"ربع / تلت / نص / كيلو"},{"name":"مشكل كباب وكفتة","price":"ربع / تلت / نص / كيلو"},{"name":"كبدة ضاني","price":"ربع / تلت / نص / كيلو"},{"name":"كباب بتلو","price":"ربع / تلت / نص / كيلو"},{"name":"لحم ستيك مشوي","price":"ربع / تلت / نص / كيلو"},{"name":"شيش طاووق لحم","price":"ربع / تلت / نص / كيلو"}]}]};
-    renderFullMenu(menuData.menu);
 
+    renderFullMenu(menuData.menu);
 
     // ===== FOREIGNERS CELEBRATIONS =====
     function renderForeigners() {
@@ -1763,6 +1797,117 @@
     setTimeout(() => {
       document.querySelectorAll('#menuGrid .reveal, #testimonialGrid .reveal, #foreignersGrid .reveal, #videosGrid .reveal, #ambianceGrid .reveal').forEach(el => observer.observe(el));
     }, 100);
+  </script>
+
+  <!-- FIREBASE + LUCK -->
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
+  <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyDwNLvaLKXAPrmUZYBHXxqTbyFyvnG2ZVU",
+      authDomain: "resturant-929b3.firebaseapp.com",
+      // CRITICAL FIX: The europe-west1 database URL must be explicitly provided
+      databaseURL: "https://resturant-929b3-default-rtdb.europe-west1.firebasedatabase.app",
+      projectId: "resturant-929b3",
+      storageBucket: "resturant-929b3.firebasestorage.app",
+      messagingSenderId: "1045776224723",
+      appId: "1:1045776224723:web:ec5bef9099116073981f26",
+      measurementId: "G-S18CD58CKY"
+    };
+
+    // Initialize Firebase
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.database();
+    
+    // Database References
+    const counterRef = db.ref('clicks_counter');
+    const menuRef = db.ref('menu');
+
+    // --- Dynamic Menu Connection ---
+    menuRef.once('value').then((snapshot) => {
+      if (snapshot.exists()) {
+        const remoteMenuData = snapshot.val();
+        renderFullMenu(remoteMenuData);
+      } else {
+        // Fallback to local hardcoded data
+        renderFullMenu(menuData.menu);
+        // Optional: Seed your database by uncommenting the line below
+        // menuRef.set(menuData.menu);
+      }
+    }).catch((err) => {
+      console.error("Database connection failed. Falling back to local menu:", err);
+      renderFullMenu(menuData.menu);
+    });
+
+    // --- Try Your Luck Logic ---
+    const btn = document.getElementById('luckBtn');
+    const msg = document.getElementById('luckMsg');
+    const LS_KEY = 'luck_last_click';
+    const COOLDOWN = 24 * 60 * 60 * 1000; // 24 Hours
+
+    function checkCoolDown() {
+      var last = localStorage.getItem(LS_KEY);
+      if (!last) return 0;
+      var elapsed = Date.now() - parseInt(last, 10);
+      return elapsed >= COOLDOWN ? 0 : COOLDOWN - elapsed;
+    }
+
+    function formatRemaining(ms) {
+      var h = Math.floor(ms / 3600000);
+      var m = Math.floor((ms % 3600000) / 60000);
+      return h + ' ساعة و ' + m + ' دقيقة';
+    }
+
+    function updateUI() {
+      var remaining = checkCoolDown();
+      if (remaining > 0) {
+        btn.disabled = true;
+        msg.className = 'luck-msg wait';
+        msg.textContent = '⏳ انتظر ' + formatRemaining(remaining) + ' لتجربة الحظ مرة أخرى';
+      } else {
+        btn.disabled = false;
+      }
+    }
+
+    // Run initial check and refresh every minute
+    updateUI();
+    setInterval(updateUI, 60000);
+
+    btn.addEventListener('click', function() {
+      var remaining = checkCoolDown();
+      if (remaining > 0) {
+        updateUI();
+        return;
+      }
+
+      btn.disabled = true;
+      msg.textContent = '🔄 جاري تجربة الحظ...';
+
+      // Atomic counter increment to handle concurrent users
+      counterRef.transaction(function(current) {
+        return (current || 0) + 1;
+      }, function(err, committed, snap) {
+        if (err || !committed) {
+          msg.className = 'luck-msg lose';
+          msg.textContent = '❌ حصل خطأ، حاول مرة أخرى';
+          btn.disabled = false;
+          return;
+        }
+        
+        var count = snap.val();
+        localStorage.setItem(LS_KEY, String(Date.now())); // Start cooldown
+        
+        if (count % 100 === 0) {
+          msg.className = 'luck-msg win';
+          msg.innerHTML = '🎉 مبروك! كسبت كود خصم 50%: <strong>قصر-100</strong><br>استخدم الكود عند الطلب';
+        } else {
+          msg.className = 'luck-msg lose';
+          msg.textContent = '😞 للأسف ما كسبتش النهاردة. جرب بكرة!';
+        }
+        
+        updateUI();
+      });
+    });
   </script>
 </body>
 </html>
