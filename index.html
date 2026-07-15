@@ -411,8 +411,8 @@
     /* ===== TESTIMONIALS ===== */
     .testimonials{
       position:relative;
-      background:url('assets/images/resturant-image.jpg') center/cover no-repeat;
-      background-attachment:fixed;
+      background:url('assets/images/resturant-image.jpg') center/100% auto no-repeat;
+      transition:background-size 0.1s linear;
     }
     .testimonials::before{
       content:'';position:absolute;inset:0;
@@ -1102,7 +1102,12 @@
         </div>
         <div class="logo-item reveal">
           <div class="icon"><i class="fab fa-facebook"></i></div>
-          <div class="name">Facebook</div>
+          <a href="https://www.facebook.com/kasr.alsalamm" target="_blank" style="color:inherit;text-decoration:none;"><div class="name">Facebook</div></a>
+          <div class="stars">★★★★★</div>
+        </div>
+        <div class="logo-item reveal">
+          <div class="icon"><i class="fab fa-instagram"></i></div>
+          <a href="https://www.instagram.com/kasrel.sallam" target="_blank" style="color:inherit;text-decoration:none;"><div class="name">Instagram</div></a>
           <div class="stars">★★★★★</div>
         </div>
       </div>
@@ -1251,7 +1256,7 @@
         </div>
       </div>
       <div class="cta-block reveal">
-        <h2 data-i18n="ctaTitle">جوعان؟ احنا موجودين!</h2>
+        <h2 data-i18n="ctaTitle">جاعان؟ احنا موجودين!</h2>
         <p data-i18n="ctaDesc">اطلب دلوقتي واستمتع بأشهي المشويات الفاخرة في مدينة السادات</p>
         <div class="cta-btns">
           <a href="tel:01289696186" class="btn btn-primary">
@@ -1313,8 +1318,8 @@
     <div class="social-links">
       <a href="https://wa.me/201289696186" target="_blank" aria-label="واتساب"><i class="fab fa-whatsapp"></i></a>
       <a href="tel:01289696186" aria-label="اتصال"><i class="fas fa-phone"></i></a>
-      <a href="https://www.facebook.com" target="_blank" aria-label="فيسبوك"><i class="fab fa-facebook-f"></i></a>
-      <a href="https://www.instagram.com" target="_blank" aria-label="انستجرام"><i class="fab fa-instagram"></i></a>
+      <a href="https://www.facebook.com/kasr.alsalamm" target="_blank" aria-label="فيسبوك"><i class="fab fa-facebook-f"></i></a>
+      <a href="https://www.instagram.com/kasrel.sallam" target="_blank" aria-label="انستجرام"><i class="fab fa-instagram"></i></a>
     </div>
     <p class="brand" data-i18n="brandName">قصر السلام للمشويات</p>
     <p data-i18n="footerAddress">مدينة السادات - المنطقة الثامنة - أمام محكمة الأسرة</p>
@@ -1339,55 +1344,55 @@
         navForeigners: 'حفلات ومناسبات', navVideos: 'فيديوهات',
         navGallery: 'معرض الصور', navDelivery: 'طلب دليفري', navTestimonials: 'آراء العملاء', navContact: 'اتصل بنا',
         heroTitle: 'قصر السلام..<br><span class="gold-text">أصل المشويات الفاخرة</span>',
-        heroDesc: 'طعم يجمع الحبايب بتوابلنا الخاصة. متاحون 24 ساعة لخدمتكم! مشاوي شرقية أصيلة في مدينة السادات.',
-        heroBtn1: 'اطلب دليفري الآن', heroBtn2: 'اتصل بنا', scrollDown: 'اسحب للأسفل',
+        heroDesc: 'طعم يجمع الحبايب بتوابلنا الخاصة. موجودين 24 ساعة في خدمتك! مشاوي شرقية أصيلة في مدينة السادات.',
+        heroBtn1: 'اطلب دليفري الآن', heroBtn2: 'اتصل بنا', scrollDown: 'اسحب لتحت',
         pageTitle: 'قصر السلام للمشويات | Qasr El Salam',
-        stat1: 'سنوات من الخبرة', stat2: 'صنف من المشاوي', stat3: 'عميل سعيد', stat4: 'ساعة خدمة متواصلة',
+        stat1: 'سنوات خبرة', stat2: 'صنف مشاوي', stat3: 'عميل مبسوط', stat4: 'ساعة خدمة',
         aboutLabel: 'عن قصر السلام', aboutTitle: 'حيث <span class="gold">النار</span> تلتقي بالفن',
-        aboutDesc: 'وجهتك الأولى للمشويات في مدينة السادات. نقدم أشهى أنواع الكباب، الكفتة، والطواجن المحضرة بعناية فائقة وتوابل سرية. المكان الأنسب للمة العيلة، العزومات الكبرى، وعشاء العمل.',
-        aboutHours: '<i class="fas fa-clock"></i> مفتوح 24 ساعة طوال أيام الأسبوع',
+        aboutDesc: 'أفضل مكان للمشويات في مدينة السادات. بنقدم ألذ أنواع الكباب، الكفتة، والطواجن المحضرة بعناية وتوابل سرية. المكان المثالي للمة العيلة، العزومات الكبرى، وعزومات الشغل.',
+        aboutHours: '<i class="fas fa-clock"></i> فاتحين 24 ساعة كل يوم',
         aboutBadge: 'أجواء قصر السلام',
         feat1: 'مشاوي على الفحم', feat2: 'طواجن مندي', feat3: 'دليفري 24 ساعة', feat4: 'توابل سرية',
-        menuLabel: 'قائمة الطعام', menuTitle: 'أشهي <span class="gold">المشويات</span> لدينا',
-        menuSub: 'تشكيلة فاخرة من أجود أنواع المشويات والطواجن الشرقية',
+        menuLabel: 'قائمة الطعام', menuTitle: 'أشهى <span class="gold">المشويات</span> عندنا',
+        menuSub: 'تشكيلة فاخرة من أطيب أنواع المشويات والطواجن الشرقية',
         fullMenuLabel: 'القائمة الكاملة', fullMenuTitle: 'كل <span class="gold">ما نقدمه</span>',
-        fullMenuSub: 'تصفح جميع أصنافنا الشهية مع الأسعار',
+        fullMenuSub: 'تصفح كل أصنافنا الشهية مع الأسعار',
         deliveryLabel: 'طلب دليفري', deliveryTitle: 'نوصل لك <span class="gold">أينما كنت</span>',
-        deliverySub: 'طلبك وصل! اطلب دلوقتي واستمتع بأشهي المشويات الفاخرة',
+        deliverySub: 'طلبك وصل! اطلب دلوقتي واستمتع بأشهى المشويات الفاخرة',
         brandName: 'قصر السلام للمشويات',
         deliveryAddress: 'مدينة السادات - المنطقة الثامنة<br>أمام محكمة الأسرة',
         deliveryHours: 'دليفري 24 ساعة',
         deliveryDesc: 'نوصل طلبك في أسرع وقت<br>أينما كنت في مدينة السادات',
         bookingTitle: 'حجز القاعات والحفلات',
         bookingDesc: 'القاعات متاحة للمناسبات<br>احجز دلوقتي',
-        socialLabel: 'موثوق من', socialTitle: 'عملاؤنا <span class="gold">يسعدونا</span>',
+        socialLabel: 'واثق فينا', socialTitle: 'طبعا رضا عملاءنا <span class="gold">أهم حاجة</span>',
         socialGoogle: 'Google Reviews', socialTalabat: 'طلبات',
         foreignLabel: 'حفلات ومناسبات', foreignTitle: 'زيارات <span class="gold">عالمية</span> في قصر السلام',
-        foreignSub: 'وفود من الصين، تركيا، وكبرى الشركات تحتفل عندنا',
-        foreignCTA: 'قصر السلام وجهة عالمية للمشويات الفاخرة - زورونا واستمتعوا بالتجربة',
+        foreignSub: 'وفود من الصين، تركيا، وأكبر الشركات بيحتفلوا عندنا',
+        foreignCTA: 'قصر السلام وجهة عالمية للمشويات الفاخرة - تعالوا جربوا بنفسكم',
         videoLabel: 'فيديوهات قصيرة', videoTitle: 'أجواء <span class="gold">قصر السلام</span>',
         videoSub: 'شوف الأجواء بنفسك من فيديوهاتنا القصيرة',
         ambiLabel: 'أجواء المكان', ambiTitle: 'جولة في <span class="gold">مطعمنا</span>',
-        ambiSub: 'لقطات من ديكورات وأجواء قصر السلام الداخلية',
+        ambiSub: 'لقطات من ديكورات وأجواء قصر السلام جوه المطعم',
         galleryLabel: 'معرض الصور', galleryTitle: 'شوف <span class="gold">الأكل</span> بنفسك',
-        gallerySub: 'لحظات من مطبخنا تنافس الشيفات العالمية',
+        gallerySub: 'لحظات من مطبخنا تنافس كبار الشيفات',
         testLabel: 'آراء العملاء', testTitle: 'ماذا يقولون عن <span class="gold">قصر السلام؟</span>',
         testSub: 'أكلنا بيتكلم عن نفسه، بس دول كمان شاهدين',
         contactLabel: 'اتصل بنا', contactTitle: 'نحن في <span class="gold">خدمتك</span>',
-        contactSub: 'متاحون 24 ساعة للرد على استفساراتكم',
+        contactSub: 'موجودين 24 ساعة عشانك',
         contactDelivery: 'دليفري', contactAddress: 'العنوان', contactHours: 'ساعات العمل', contactBooking: 'حجز القاعات',
         contactCall: 'اتصل بنا',
-        alwaysOpen: '24 ساعة طوال أيام الأسبوع', alwaysOpenGold: 'مفتوح دائماً',
+        alwaysOpen: '24 ساعة كل يوم', alwaysOpenGold: 'فاتحين دائماً',
         hoursTitle: 'مواعيد العمل',
         daySat: 'السبت', daySun: 'الأحد', dayMon: 'الإثنين', dayTue: 'الثلاثاء', dayWed: 'الأربعاء', dayThu: 'الخميس', dayFri: 'الجمعة',
         hoursAll: '24 ساعة',
-        ctaTitle: 'جوعان؟ احنا موجودين!', ctaDesc: 'اطلب دلوقتي واستمتع بأشهي المشويات الفاخرة في مدينة السادات',
+        ctaTitle: 'جاعان؟ احنا موجودين!', ctaDesc: 'اطلب دلوقتي واستمتع بأشهي المشويات الفاخرة في مدينة السادات',
         ctaBtn1: 'اطلب دليفري الآن', ctaBtn2: 'واتساب',
         locTitle: 'موقع <span class="gold">قصر السلام</span>',
-        locSub: 'تعالوا واختبروا طعم المشويات الفاخرة في مقرنا بمدينة السادات',
+        locSub: 'تعالوا جربوا طعم المشويات الفاخرة عندنا في مدينة السادات',
         locAddress: 'مدينة السادات - المنطقة الثامنة<br>أمام محكمة الأسرة',
-        locHours: '24 ساعة &mdash; طوال أيام الأسبوع',
-        locWhatsapp: 'راسلنا على واتساب',
+        locHours: '24 ساعة &mdash; كل يوم',
+        locWhatsapp: 'كلمنا على واتساب',
         footerAddress: 'مدينة السادات - المنطقة الثامنة - أمام محكمة الأسرة',
         footerCopy: '&copy; 2026 جميع الحقوق محفوظة',
         menuCat1: 'الولائم والمناسبات', menuCat2: 'الساندوتشات', menuCat3: 'السلطات',
@@ -1500,6 +1505,16 @@
       navbar.classList.toggle('scrolled', window.scrollY > 70);
       const backTop = document.getElementById('backTop');
       if (backTop) backTop.classList.toggle('visible', window.scrollY > 500);
+      const testi = document.querySelector('.testimonials');
+      if (testi) {
+        var r = testi.getBoundingClientRect();
+        var vh = window.innerHeight;
+        var progress = 1 - Math.min(Math.max(r.top / vh, 0), 1);
+        if (progress > 0 && progress < 1) {
+          var scale = 100 + progress * 15;
+          testi.style.backgroundSize = scale + '% auto';
+        }
+      }
     });
 
     // ===== MOBILE NAV =====
@@ -1561,10 +1576,10 @@
 
     // ===== TESTIMONIALS =====
     const reviews = [
-      { name: 'Ahmed Mesaed', rating: '★★★★★', text: 'إذا كنت تبحث عن مذاق حقيقي لأطباق مشويات شرق أوسطية أصيلة، فمطعم قصر السلام للمشويات هو وجهتك الأمثل. الرائحة وحدها كافية لجذبك - كل شيء مُحضر بمكونات طازجة ومُطهى بإتقان.' },
+      { name: 'Ahmed Mesaed', rating: '★★★★★', text: 'لو بتدور على طعم حقيقي لمشويات شرقية أصيلة، قصر السلام هو المكان الصح. الريحة بس كافية تجذبك - كل حاجة طازة ومستوية بإتقان.' },
       { name: 'حسين الغانمي', rating: '★★★★★', text: 'مطعم راقي، الاكل كلش طيب، المشاوي تفوز وشوربة لسان العصفور ممتازة.. تحياتي من العراق.' },
       { name: 'Ahmed الحاج', rating: '★★★★★', text: 'مطعم ممتاز وخدمة جيدة وانصح به لانه من افضل المطاعم في مدينة السادات.' },
-      { name: 'Mohamed Said', rating: '★★★★★', text: 'حقيقي ستاف محترم جداً، والأكل ممتاز.' }
+      { name: 'Mohamed Said', rating: '★★★★★', text: 'بجد ستاف محترم جدا، والاكل تحفة.' }
     ];
     const tGrid = document.getElementById('testimonialGrid');
     reviews.forEach(r => {
