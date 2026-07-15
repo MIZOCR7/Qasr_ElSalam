@@ -1977,6 +1977,7 @@
 
   <!-- FIREBASE + LUCK -->
   <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
   <script>
     const firebaseConfig = {
@@ -1993,27 +1994,88 @@
     // Initialize Firebase
     firebase.initializeApp(firebaseConfig);
     const db = firebase.database();
-    
+    const auth = firebase.auth();
+
     // Database References
     const counterRef = db.ref('clicks_counter');
     const menuRef = db.ref('menu');
     const winnersRef = db.ref('winners');
     const cooldownRef = db.ref('last_click_timestamp');
+    const participantRef = db.ref('luck_participants');
+    const PARTICIPANT_KEY = 'luck_participant_id';
+    const ACTIVE_ATTEMPT_KEY = 'luck_active_attempt';
+    let authReadyPromise = null;
+
+    function ensureAuth(callback) {
+      if (auth.currentUser) {
+        callback();
+        return;
+      }
+      if (authReadyPromise) {
+        authReadyPromise.then(callback).catch(callback);
+        return;
+      }
+      authReadyPromise = auth.signInAnonymously().then(function() {
+        callback();
+      }).catch(function(err) {
+        console.error('Firebase auth failed, continuing with limited access:', err);
+        callback();
+      });
+    }
+
+    function buildFingerprint() {
+      var parts = [
+        navigator.userAgent || '',
+        navigator.language || '',
+        navigator.platform || '',
+        (screen.width || 0) + 'x' + (screen.height || 0),
+        (window.innerWidth || 0) + 'x' + (window.innerHeight || 0),
+        navigator.hardwareConcurrency || '',
+        Intl.DateTimeFormat().resolvedOptions().timeZone || ''
+      ];
+      var raw = parts.join('|');
+      var hash = 0;
+      for (var i = 0; i < raw.length; i++) {
+        hash = ((hash << 5) - hash) + raw.charCodeAt(i);
+        hash = hash & hash;
+      }
+      return 'luck-' + (hash >>> 0).toString(36);
+    }
+
+    function getParticipantId() {
+      var existing = localStorage.getItem(PARTICIPANT_KEY);
+      if (existing) return existing;
+      var fingerprint = buildFingerprint();
+      localStorage.setItem(PARTICIPANT_KEY, fingerprint);
+      return fingerprint;
+    }
+
+    function tryAcquireAttemptLock() {
+      if (localStorage.getItem(ACTIVE_ATTEMPT_KEY) === '1') return false;
+      localStorage.setItem(ACTIVE_ATTEMPT_KEY, '1');
+      return true;
+    }
+
+    function releaseAttemptLock() {
+      localStorage.removeItem(ACTIVE_ATTEMPT_KEY);
+    }
 
     // --- Dynamic Menu Connection ---
-    menuRef.once('value').then((snapshot) => {
-      if (snapshot.exists()) {
-        const remoteMenuData = snapshot.val();
-        renderFullMenu(remoteMenuData);
-      } else {
-        // Fallback to local hardcoded data
+    ensureAuth(function() {
+      menuRef.once('value').then((snapshot) => {
+        if (snapshot.exists()) {
+          const remoteMenuData = snapshot.val();
+          renderFullMenu(remoteMenuData);
+        } else {
+          // Fallback to local hardcoded data
+          renderFullMenu(menuData.menu);
+          // Optional: Seed your database by uncommenting the line below
+          // menuRef.set(menuData.menu);
+        }
+      }).catch((err) => {
+        console.error("Database connection failed. Falling back to local menu:", err);
         renderFullMenu(menuData.menu);
-        // Optional: Seed your database by uncommenting the line below
-        // menuRef.set(menuData.menu);
-      }
-    }).catch((err) => {
-      console.error("Database connection failed. Falling back to local menu:", err);
-      renderFullMenu(menuData.menu);
+      });
     });
 
     // --- Sound effects ---
@@ -2080,25 +2142,18 @@
     const COOLDOWN = 24 * 60 * 60 * 1000; // 24 hours
 
     function checkCoolDown(callback) {
+      var participantId = getParticipantId();
       var localLast = localStorage.getItem(LS_KEY);
       var localRemaining = localLast ? Math.max(0, COOLDOWN - (Date.now() - parseInt(localLast, 10))) : 0;
-      // Also check Firebase for the authoritative timestamp
-      cooldownRef.once('value').then(function(snap) {
-        var fbLast = snap.val();
-        if (fbLast) {
-          var fbRemaining = Math.max(0, COOLDOWN - (Date.now() - fbLast));
-          // Use the larger remaining time (most restrictive)
-          var remaining = Math.max(localRemaining, fbRemaining);
-          // Sync localStorage to Firebase timestamp if Firebase is more restrictive
-          if (fbRemaining > localRemaining) {
-            localStorage.setItem(LS_KEY, String(fbLast));
-          }
-          callback(remaining);
-        } else {
-          callback(localRemaining);
-        }
+      participantRef.child(participantId).once('value').then(function(snap) {
+        var data = snap.val() || {};
+        var serverCooldownUntil = Number(data.cooldownUntil) || 0;
+        var serverRemaining = serverCooldownUntil > Date.now() ? Math.max(0, serverCooldownUntil - Date.now()) : 0;
+        var remaining = Math.max(localRemaining, serverRemaining);
+        var claimed = Boolean(data.claimed);
+        callback({ remaining: remaining, claimed: claimed, participantId: participantId });
       }).catch(function() {
-        callback(localRemaining);
+        callback({ remaining: localRemaining, claimed: false, participantId: participantId });
       });
     }
 
@@ -2116,8 +2171,17 @@
     }
 
     function updateUI() {
-      checkCoolDown(function(remaining) {
-        if (remaining > 0) {
+      checkCoolDown(function(state) {
+        if (state.claimed) {
+          btn.disabled = true;
+          msg.className = 'luck-msg';
+          msg.innerHTML =
+            '<div class="luck-wait-card">' +
+              '<div class="luck-wait-icon">🔒</div>' +
+              '<div class="luck-wait-txt">تمت معالجة فرصتك بالفعل</div>' +
+              '<div class="luck-wait-sub">تم حجز المشاركة لهذا الجهاز بشكل آمن</div>' +
+            '</div>';
+        } else if (state.remaining > 0) {
           btn.disabled = true;
           msg.className = 'luck-msg';
           msg.innerHTML =
@@ -2125,7 +2189,7 @@
               '<div class="luck-wait-icon">⏳</div>' +
               '<div class="luck-wait-txt">مع الأسف، خلصت محاولتك!</div>' +
               '<div class="luck-wait-sub">جرب تاني بعد ما العداد يخلص</div>' +
-              '<div class="luck-wait-countdown">' + formatRemaining(remaining) + '</div>' +
+              '<div class="luck-wait-countdown">' + formatRemaining(state.remaining) + '</div>' +
             '</div>';
         } else {
           btn.disabled = false;
@@ -2136,8 +2200,10 @@
     }
 
     // Run initial check and refresh every second
-    updateUI();
-    setInterval(updateUI, 1000);
+    ensureAuth(function() {
+      updateUI();
+      setInterval(updateUI, 1000);
+    });
 
     function showLoading() {
       btn.classList.add('loading');
@@ -2155,82 +2221,126 @@
     }
 
     btn.addEventListener('click', function() {
-      checkCoolDown(function(remaining) {
-      if (remaining > 0) {
-        updateUI();
-        return;
-      }
-
-      btn.disabled = true;
-      var tickInterval = showLoading();
-
-      // Atomic counter increment to handle concurrent users
-      counterRef.transaction(function(current) {
-        return (current || 0) + 1;
-      }, function(err, committed, snap) {
-        if (err) {
-          console.error('Firebase transaction error:', err);
-          hideLoading(tickInterval);
-          msg.className = 'luck-msg';
-          msg.innerHTML = '<div class="luck-lose-card"><div class="luck-lose-icon">❌</div><div class="luck-lose-txt">حصل خطأ في الاتصال</div><div class="luck-lose-sub">تأكد من إنشاء قاعدة البيانات في Firebase</div></div>';
-          btn.disabled = false;
-          return;
-        }
-        if (!committed) {
-          hideLoading(tickInterval);
-          msg.className = 'luck-msg';
-          msg.textContent = '❌ حصل خطأ، حاول مرة أخرى';
-          btn.disabled = false;
-          return;
-        }
-        
-        var count = snap.val();
-        var nowTs = Date.now();
-        localStorage.setItem(LS_KEY, String(nowTs)); // Start cooldown
-        cooldownRef.set(nowTs); // Also save to Firebase
-        var isWin = (count % 100 === 0);
-
-        // GENERATE COUPON DATA
-        var chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
-        var rand = '';
-        for (var i = 0; i < 4; i++) rand += chars[Math.floor(Math.random() * chars.length)];
-        var nowDate = new Date();
-        var dd = String(nowDate.getDate()).padStart(2,'0');
-        var mm = String(nowDate.getMonth()+1).padStart(2,'0');
-        var yyyy = nowDate.getFullYear();
-        var exp = new Date(nowTs + 7 * 24 * 60 * 60 * 1000);
-        var expD = String(exp.getDate()).padStart(2,'0');
-        var expM = String(exp.getMonth()+1).padStart(2,'0');
-        var expY = exp.getFullYear();
-        var discount = Math.floor(Math.random() * 11) + 10;
-        var code = rand + '-' + dd + '-' + mm + '-' + yyyy;
-        var dateStr = dd + '/' + mm + '/' + yyyy;
-        var expStr = expD + '/' + expM + '/' + expY;
-
-        // SUSPENSE DELAY then reveal
-        setTimeout(function() {
-          hideLoading(tickInterval);
-          if (isWin) {
-            playWinSound();
-            window._pendingCoupon = { code: code, discount: discount, date: dateStr, expiry: expStr, timestamp: nowTs };
-            document.getElementById('winnerNameInput').value = '';
-            document.getElementById('nameErr').textContent = '';
-            document.getElementById('nameOverlay').classList.add('open');
-            document.getElementById('winnerNameInput').focus();
-          } else {
-            playLoseSound();
-            msg.className = 'luck-msg';
-            msg.innerHTML =
-              '<div class="luck-lose-card">' +
-                '<div class="luck-lose-icon">😞</div>' +
-                '<div class="luck-lose-txt">للأسف ما كسبتش النهاردة!</div>' +
-                '<div class="luck-lose-sub">جرب بكرة — كل 100 واحد بيكسب</div>' +
-                '<div class="luck-countdown">⏳ ' + formatRemaining(COOLDOWN) + ' وانته بتجرب تاني</div>' +
-              '</div>';
+      ensureAuth(function() {
+        checkCoolDown(function(state) {
+          if (state.claimed) {
             updateUI();
+            return;
           }
-        }, 2200);
-      });
+          if (state.remaining > 0) {
+            updateUI();
+            return;
+          }
+          if (!tryAcquireAttemptLock()) {
+            msg.className = 'luck-msg';
+            msg.innerHTML = '<div class="luck-lose-card"><div class="luck-lose-icon">🚫</div><div class="luck-lose-txt">المشاركة قيد المعالجة بالفعل</div><div class="luck-lose-sub">استخدم نفس النافذة أو انتظر حتى يكتمل الطلب</div></div>';
+            return;
+          }
+
+          btn.disabled = true;
+          var tickInterval = showLoading();
+
+          participantRef.child(state.participantId).transaction(function(current) {
+            var nowTs = Date.now();
+            var data = current || {};
+            if (data.claimed) return;
+            if (Number(data.cooldownUntil) > nowTs) return;
+            data.attempts = (Number(data.attempts) || 0) + 1;
+            data.lastAttempt = nowTs;
+            data.cooldownUntil = nowTs + COOLDOWN;
+            data.deviceFingerprint = getParticipantId();
+            return data;
+          }, function(err, committed, snap) {
+            if (err) {
+              console.error('Participant transaction error:', err);
+              releaseAttemptLock();
+              hideLoading(tickInterval);
+              msg.className = 'luck-msg';
+              msg.innerHTML = '<div class="luck-lose-card"><div class="luck-lose-icon">❌</div><div class="luck-lose-txt">حصل خطأ في الاتصال</div><div class="luck-lose-sub">تأكد من إنشاء قاعدة البيانات في Firebase</div></div>';
+              btn.disabled = false;
+              return;
+            }
+            if (!committed) {
+              releaseAttemptLock();
+              hideLoading(tickInterval);
+              msg.className = 'luck-msg';
+              msg.innerHTML = '<div class="luck-lose-card"><div class="luck-lose-icon">🔒</div><div class="luck-lose-txt">تم حظر هذه المشاركة مسبقًا</div><div class="luck-lose-sub">هذه الرسالة تظهر إذا كانت الفرصة مستخدمة أو في حالة انتظار</div></div>';
+              btn.disabled = false;
+              return;
+            }
+
+            // Atomic counter increment to handle concurrent users
+            counterRef.transaction(function(current) {
+              return (current || 0) + 1;
+            }, function(err2, committed2, snap2) {
+              if (err2) {
+                console.error('Firebase transaction error:', err2);
+                releaseAttemptLock();
+                hideLoading(tickInterval);
+                msg.className = 'luck-msg';
+                msg.innerHTML = '<div class="luck-lose-card"><div class="luck-lose-icon">❌</div><div class="luck-lose-txt">حصل خطأ في الاتصال</div><div class="luck-lose-sub">تأكد من إنشاء قاعدة البيانات في Firebase</div></div>';
+                btn.disabled = false;
+                return;
+              }
+              if (!committed2) {
+                releaseAttemptLock();
+                hideLoading(tickInterval);
+                msg.className = 'luck-msg';
+                msg.textContent = '❌ حصل خطأ، حاول مرة أخرى';
+                btn.disabled = false;
+                return;
+              }
+
+              var count = snap2.val();
+              var nowTs = Date.now();
+              localStorage.setItem(LS_KEY, String(nowTs)); // Start cooldown
+              cooldownRef.set(nowTs); // Also save to Firebase
+              var isWin = (count % 100 === 0);
+
+              // GENERATE COUPON DATA
+              var chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+              var rand = '';
+              for (var i = 0; i < 4; i++) rand += chars[Math.floor(Math.random() * chars.length)];
+              var nowDate = new Date();
+              var dd = String(nowDate.getDate()).padStart(2,'0');
+              var mm = String(nowDate.getMonth()+1).padStart(2,'0');
+              var yyyy = nowDate.getFullYear();
+              var exp = new Date(nowTs + 7 * 24 * 60 * 60 * 1000);
+              var expD = String(exp.getDate()).padStart(2,'0');
+              var expM = String(exp.getMonth()+1).padStart(2,'0');
+              var expY = exp.getFullYear();
+              var discount = Math.floor(Math.random() * 11) + 10;
+              var code = rand + '-' + dd + '-' + mm + '-' + yyyy;
+              var dateStr = dd + '/' + mm + '/' + yyyy;
+              var expStr = expD + '/' + expM + '/' + expY;
+
+              // SUSPENSE DELAY then reveal
+              setTimeout(function() {
+                releaseAttemptLock();
+                hideLoading(tickInterval);
+                if (isWin) {
+                  playWinSound();
+                  window._pendingCoupon = { code: code, discount: discount, date: dateStr, expiry: expStr, timestamp: nowTs };
+                  document.getElementById('winnerNameInput').value = '';
+                  document.getElementById('nameErr').textContent = '';
+                  document.getElementById('nameOverlay').classList.add('open');
+                  document.getElementById('winnerNameInput').focus();
+                } else {
+                  playLoseSound();
+                  msg.className = 'luck-msg';
+                  msg.innerHTML =
+                    '<div class="luck-lose-card">' +
+                      '<div class="luck-lose-icon">😞</div>' +
+                      '<div class="luck-lose-txt">للأسف ما كسبتش النهاردة!</div>' +
+                      '<div class="luck-lose-sub">جرب بكرة — كل 100 واحد بيكسب</div>' +
+                      '<div class="luck-countdown">⏳ ' + formatRemaining(COOLDOWN) + ' وانته بتجرب تاني</div>' +
+                    '</div>';
+                  updateUI();
+                }
+              }, 2200);
+            });
+          });
+        });
       });
     });
 
@@ -2243,21 +2353,46 @@
       }
       var c = window._pendingCoupon;
       if (!c) return;
-      winnersRef.push({
-        name: name,
-        code: c.code,
-        discount: c.discount,
-        date: c.date,
-        expiry: c.expiry,
-        timestamp: c.timestamp
+      var confirmBtn = document.getElementById('nameConfirm');
+      confirmBtn.disabled = true;
+      ensureAuth(function() {
+        participantRef.child(getParticipantId()).transaction(function(current) {
+          var data = current || {};
+          if (data.claimed) return;
+          data.claimed = true;
+          data.claimedAt = Date.now();
+          data.claimCode = c.code;
+          data.claimDiscount = c.discount;
+          data.name = name;
+          return data;
+        }, function(err, committed) {
+          confirmBtn.disabled = false;
+          if (err) {
+            console.error('Winner claim transaction error:', err);
+            document.getElementById('nameErr').textContent = 'حدث خطأ أثناء حفظ الكوبون';
+            return;
+          }
+          if (!committed) {
+            document.getElementById('nameErr').textContent = 'تم استخدام هذه المشاركة بالفعل';
+            return;
+          }
+          winnersRef.push({
+            name: name,
+            code: c.code,
+            discount: c.discount,
+            date: c.date,
+            expiry: c.expiry,
+            timestamp: c.timestamp
+          });
+          counterRef.set(0); // reset counter after win
+          document.getElementById('nameOverlay').classList.remove('open');
+          document.getElementById('winCode').textContent = c.code;
+          document.getElementById('winSub').textContent = '🎉 كسبت كود خصم ' + c.discount + '% على طلبك!';
+          document.getElementById('winNote').textContent = 'صور الكود بسرعة وابعت على 01050126822 — العرض ساري لمدة أسبوع، أخر حد ' + c.expiry;
+          document.getElementById('luckOverlay').classList.add('open');
+          window._pendingCoupon = null;
+        });
       });
-      counterRef.set(0); // reset counter after win
-      document.getElementById('nameOverlay').classList.remove('open');
-      document.getElementById('winCode').textContent = c.code;
-      document.getElementById('winSub').textContent = '🎉 كسبت كود خصم ' + c.discount + '% على طلبك!';
-      document.getElementById('winNote').textContent = 'صور الكود بسرعة وابعت على 01050126822 — العرض ساري لمدة أسبوع، أخر حد ' + c.expiry;
-      document.getElementById('luckOverlay').classList.add('open');
-      window._pendingCoupon = null;
     });
     // Name input Enter key
     document.getElementById('winnerNameInput').addEventListener('keydown', function(e) {
