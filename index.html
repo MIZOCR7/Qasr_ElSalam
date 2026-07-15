@@ -540,11 +540,111 @@
     }
     .luck-section .luck-box .btn-luck:hover{transform:translateY(-3px);box-shadow:0 8px 30px rgba(220,38,38,0.35)}
     .luck-section .luck-box .btn-luck:disabled{opacity:0.5;cursor:not-allowed;transform:none;box-shadow:none}
-    .luck-section .luck-box .luck-msg{margin-top:18px;font-size:0.95rem;font-weight:700;min-height:28px;direction:rtl}
+
+    /* --- Luck result (inline) --- */
+    .luck-section .luck-box .luck-msg{margin-top:18px;font-size:0.95rem;font-weight:700;min-height:28px;direction:rtl;transition:all 0.4s}
     .luck-section .luck-box .luck-msg.win{color:#22c55e}
     .luck-section .luck-box .luck-msg.lose{color:var(--grill-red)}
     .luck-section .luck-box .luck-msg.wait{color:var(--gold)}
-    @media(max-width:480px){.luck-section{padding:30px 16px}.luck-section .luck-box{padding:30px 20px}}
+    .luck-wait-card{
+      display:flex;flex-direction:column;align-items:center;gap:6px;
+      margin-top:12px;padding:18px;background:rgba(212,160,38,0.06);
+      border:1px solid rgba(212,160,38,0.2);border-radius:12px;
+    }
+    .luck-wait-card .luck-wait-icon{font-size:2.2rem;animation:waitSpin 2s linear infinite}
+    @keyframes waitSpin{0%{transform:rotate(0deg)}100%{transform:rotate(360deg)}}
+    .luck-wait-card .luck-wait-txt{color:var(--gold);font-size:1.1rem;font-weight:800}
+    .luck-wait-card .luck-wait-sub{color:var(--text-sec);font-size:0.82rem;font-weight:400}
+    .luck-wait-card .luck-wait-countdown{color:#fff;font-size:0.9rem;font-weight:700;margin-top:2px;direction:ltr;display:inline-block;background:rgba(0,0,0,0.3);padding:4px 14px;border-radius:20px;font-variant-numeric:tabular-nums}
+
+
+    /* --- Lose slot-machine shake + card --- */
+    .luck-lose-card{
+      display:flex;flex-direction:column;align-items:center;gap:6px;
+      margin-top:12px;padding:18px;background:rgba(220,38,38,0.08);
+      border:1px solid rgba(220,38,38,0.25);border-radius:12px;
+      animation:loseShake 0.5s ease;
+    }
+    @keyframes loseShake{0%,100%{transform:translateX(0)}20%{transform:translateX(-8px)}40%{transform:translateX(8px)}60%{transform:translateX(-6px)}80%{transform:translateX(6px)}}
+    .luck-lose-card .luck-lose-icon{font-size:2.4rem;opacity:0.6}
+    .luck-lose-card .luck-lose-txt{color:var(--grill-red);font-size:1.1rem;font-weight:800}
+    .luck-lose-card .luck-lose-sub{color:var(--text-sec);font-size:0.82rem;font-weight:400}
+    .luck-lose-card .luck-countdown{color:var(--gold);font-size:0.85rem;font-weight:700;margin-top:2px}
+
+    /* --- Win modal overlay --- */
+    .luck-overlay{
+      position:fixed;inset:0;z-index:9999;
+      background:rgba(0,0,0,0.75);backdrop-filter:blur(6px);
+      display:flex;align-items:center;justify-content:center;
+      opacity:0;visibility:hidden;transition:all 0.4s;
+    }
+    .luck-overlay.open{opacity:1;visibility:visible}
+
+    /* Confetti particles */
+    .confetti-container{position:fixed;inset:0;pointer-events:none;overflow:hidden;z-index:10000}
+    .confetti{
+      position:absolute;width:10px;height:10px;top:-20px;
+      animation:confettiFall linear forwards;
+    }
+    @keyframes confettiFall{0%{transform:translateY(0) rotate(0deg);opacity:1}100%{transform:translateY(110vh) rotate(720deg);opacity:0}}
+    .confetti:nth-child(1){left:10%;background:var(--gold);width:8px;height:8px;animation-duration:3.2s;animation-delay:0s}
+    .confetti:nth-child(2){left:20%;background:#22c55e;width:6px;height:12px;animation-duration:2.8s;animation-delay:0.1s}
+    .confetti:nth-child(3){left:30%;background:var(--grill-red);width:10px;height:6px;animation-duration:3.5s;animation-delay:0.2s}
+    .confetti:nth-child(4){left:40%;background:#f59e0b;width:7px;height:7px;animation-duration:2.5s;animation-delay:0s}
+    .confetti:nth-child(5){left:50%;background:#fff;width:5px;height:10px;animation-duration:3.8s;animation-delay:0.3s}
+    .confetti:nth-child(6){left:60%;background:var(--gold);width:12px;height:6px;animation-duration:3s;animation-delay:0.15s}
+    .confetti:nth-child(7){left:70%;background:#22c55e;width:8px;height:8px;animation-duration:2.7s;animation-delay:0.4s}
+    .confetti:nth-child(8){left:80%;background:#ef4444;width:6px;height:10px;animation-duration:3.4s;animation-delay:0.05s}
+    .confetti:nth-child(9){left:25%;background:#f59e0b;width:9px;height:5px;animation-duration:3.1s;animation-delay:0.25s}
+    .confetti:nth-child(10){left:75%;background:#fff;width:7px;height:7px;animation-duration:2.9s;animation-delay:0.35s}
+    .confetti:nth-child(11){left:15%;background:var(--gold);width:11px;height:5px;animation-duration:3.6s;animation-delay:0.5s}
+    .confetti:nth-child(12){left:85%;background:#22c55e;width:6px;height:9px;animation-duration:2.6s;animation-delay:0.45s}
+    .confetti:nth-child(13){left:45%;background:var(--grill-red);width:8px;height:8px;animation-duration:3.3s;animation-delay:0.6s}
+    .confetti:nth-child(14){left:65%;background:#f59e0b;width:5px;height:11px;animation-duration:2.4s;animation-delay:0.55s}
+    .confetti:nth-child(15){left:5%;background:#fff;width:9px;height:6px;animation-duration:3.7s;animation-delay:0.7s}
+    .confetti:nth-child(16){left:90%;background:var(--gold);width:7px;height:7px;animation-duration:2.3s;animation-delay:0.65s}
+
+    /* Win modal card */
+    .luck-win-modal{
+      position:relative;z-index:10001;
+      max-width:420px;width:90%;
+      background:linear-gradient(145deg,#1a1a1a,#2a1f0a);
+      border:2px solid var(--gold);border-radius:24px;
+      padding:40px 30px;text-align:center;direction:rtl;
+      box-shadow:0 0 60px rgba(212,160,38,0.3),inset 0 0 80px rgba(212,160,38,0.05);
+      animation:winPop 0.5s cubic-bezier(0.175,0.885,0.32,1.275);
+    }
+    @keyframes winPop{0%{transform:scale(0.3);opacity:0}100%{transform:scale(1);opacity:1}}
+    .luck-win-modal .win-trophy{font-size:4rem;display:block;margin-bottom:6px;animation:trophyBounce 1s ease infinite}
+    @keyframes trophyBounce{0%,100%{transform:translateY(0)}50%{transform:translateY(-12px)}}
+    .luck-win-modal .win-title{font-size:1.7rem;font-weight:900;color:var(--gold);margin:8px 0 4px;}
+    .luck-win-modal .win-sub{color:var(--text-sec);font-size:0.95rem;margin-bottom:18px}
+    .luck-win-modal .win-code{
+      display:inline-block;
+      background:linear-gradient(135deg,rgba(212,160,38,0.15),rgba(212,160,38,0.05));
+      border:2px dashed var(--gold);border-radius:12px;
+      padding:14px 36px;margin:6px 0 20px;
+      font-size:1.8rem;font-weight:900;color:var(--gold);
+      letter-spacing:3px;
+      animation:codePulse 1.5s ease infinite;
+    }
+    @keyframes codePulse{0%,100%{box-shadow:0 0 10px rgba(212,160,38,0.2)}50%{box-shadow:0 0 30px rgba(212,160,38,0.5)}}
+    .luck-win-modal .win-note{color:var(--text-sec);font-size:0.8rem;margin-bottom:18px}
+    .luck-win-modal .win-close{
+      display:inline-flex;align-items:center;gap:8px;
+      padding:10px 30px;border:1px solid var(--border-med);border-radius:50px;
+      background:transparent;color:#fff;font-size:0.9rem;font-weight:600;
+      font-family:var(--font-base);cursor:pointer;transition:all 0.3s;
+    }
+    .luck-win-modal .win-close:hover{background:rgba(255,255,255,0.08);border-color:var(--gold);color:var(--gold)}
+
+    @media(max-width:480px){
+      .luck-section{padding:30px 16px}.luck-section .luck-box{padding:30px 20px}
+      .luck-win-modal{padding:30px 20px}
+      .luck-win-modal .win-trophy{font-size:3rem}
+      .luck-win-modal .win-title{font-size:1.3rem}
+      .luck-win-modal .win-code{font-size:1.4rem;padding:12px 24px}
+    }
 
     /* ===== LOCATION SECTION ===== */
     .location-section{background:var(--charcoal);padding:0;overflow:hidden}
@@ -1331,11 +1431,31 @@
   <section class="luck-section">
     <div class="luck-box reveal">
       <h3>🎡 جرب حظك واكسب خصم!</h3>
-      <p>اضغط على الزر وجرب حظك — ممكن تكسب كود خصم 50% على طلبك!<br>فرصة واحدة كل 24 ساعة</p>
+      <p>اضغط على الزر وجرب حظك — ممكن تكسب خصم يصل إلى 40% على طلبك!<br>فرصة واحدة كل 24 ساعة</p>
       <button class="btn-luck" id="luckBtn">🎰 جرب حظك</button>
       <div class="luck-msg" id="luckMsg"></div>
     </div>
   </section>
+
+  <!-- WIN MODAL -->
+  <div class="luck-overlay" id="luckOverlay">
+    <div class="confetti-container" id="confettiBox">
+      <div class="confetti"></div><div class="confetti"></div><div class="confetti"></div>
+      <div class="confetti"></div><div class="confetti"></div><div class="confetti"></div>
+      <div class="confetti"></div><div class="confetti"></div><div class="confetti"></div>
+      <div class="confetti"></div><div class="confetti"></div><div class="confetti"></div>
+      <div class="confetti"></div><div class="confetti"></div><div class="confetti"></div>
+      <div class="confetti"></div>
+    </div>
+    <div class="luck-win-modal">
+      <span class="win-trophy">🏆</span>
+      <div class="win-title">🎉 مبروك! أنت الفائز!</div>
+      <div class="win-sub" id="winSub">كسبت خصم على طلبك!</div>
+      <div class="win-code" id="winCode">قصر-XXXX</div>
+      <div class="win-note" id="winNote">استخدم الكود عند الطلب</div>
+      <button class="win-close" id="winClose">✕ إغلاق</button>
+    </div>
+  </div>
 
   <!-- FOOTER -->
   <footer>
@@ -1804,15 +1924,14 @@
   <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
   <script>
     const firebaseConfig = {
-      apiKey: "AIzaSyDwNLvaLKXAPrmUZYBHXxqTbyFyvnG2ZVU",
-      authDomain: "resturant-929b3.firebaseapp.com",
-      // CRITICAL FIX: The europe-west1 database URL must be explicitly provided
-      databaseURL: "https://resturant-929b3-default-rtdb.europe-west1.firebasedatabase.app",
-      projectId: "resturant-929b3",
-      storageBucket: "resturant-929b3.firebasestorage.app",
-      messagingSenderId: "1045776224723",
-      appId: "1:1045776224723:web:ec5bef9099116073981f26",
-      measurementId: "G-S18CD58CKY"
+      apiKey: "AIzaSyC7yHaTmGu1AL4NuX9l9Lk0GEl2w7gVQXY",
+      authDomain: "resturant-c6b42.firebaseapp.com",
+      databaseURL: "https://resturant-c6b42-default-rtdb.firebaseio.com",
+      projectId: "resturant-c6b42",
+      storageBucket: "resturant-c6b42.firebasestorage.app",
+      messagingSenderId: "818970408570",
+      appId: "1:818970408570:web:3f7fe071404153a4682dc3",
+      measurementId: "G-D7RSHWGWC9"
     };
 
     // Initialize Firebase
@@ -1843,7 +1962,7 @@
     const btn = document.getElementById('luckBtn');
     const msg = document.getElementById('luckMsg');
     const LS_KEY = 'luck_last_click';
-    const COOLDOWN = 24 * 60 * 60 * 1000; // 24 Hours
+    const COOLDOWN = 24 * 60 * 60 * 1000; // 24 hours
 
     function checkCoolDown() {
       var last = localStorage.getItem(LS_KEY);
@@ -1858,14 +1977,27 @@
       return h + ' ساعة و ' + m + ' دقيقة';
     }
 
+    function resetCooldown() {
+      localStorage.removeItem(LS_KEY);
+      updateUI();
+    }
+
     function updateUI() {
       var remaining = checkCoolDown();
       if (remaining > 0) {
         btn.disabled = true;
-        msg.className = 'luck-msg wait';
-        msg.textContent = '⏳ انتظر ' + formatRemaining(remaining) + ' لتجربة الحظ مرة أخرى';
+        msg.className = 'luck-msg';
+        msg.innerHTML =
+          '<div class="luck-wait-card">' +
+            '<div class="luck-wait-icon">⏳</div>' +
+            '<div class="luck-wait-txt">مع الأسف، خلصت محاولتك!</div>' +
+            '<div class="luck-wait-sub">جرب تاني بعد ما الساعة تخلص</div>' +
+            '<div class="luck-wait-countdown">' + formatRemaining(remaining) + '</div>' +
+          '</div>';
       } else {
         btn.disabled = false;
+        msg.className = 'luck-msg';
+        msg.innerHTML = '';
       }
     }
 
@@ -1898,15 +2030,43 @@
         localStorage.setItem(LS_KEY, String(Date.now())); // Start cooldown
         
         if (count % 100 === 0) {
-          msg.className = 'luck-msg win';
-          msg.innerHTML = '🎉 مبروك! كسبت كود خصم 50%: <strong>قصر-100</strong><br>استخدم الكود عند الطلب';
+          var chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+          var rand = '';
+          for (var i = 0; i < 4; i++) rand += chars[Math.floor(Math.random() * chars.length)];
+          var now = new Date();
+          var dd = String(now.getDate()).padStart(2,'0');
+          var mm = String(now.getMonth()+1).padStart(2,'0');
+          var yyyy = now.getFullYear();
+          var exp = new Date(now.getTime() + 7 * 24 * 60 * 60 * 1000);
+          var expD = String(exp.getDate()).padStart(2,'0');
+          var expM = String(exp.getMonth()+1).padStart(2,'0');
+          var expY = exp.getFullYear();
+          var discount = Math.floor(Math.random() * 31) + 10;
+          document.getElementById('winCode').textContent = rand + '-' + dd + '-' + mm + '-' + yyyy;
+          document.getElementById('winSub').textContent = '🎉 كسبت كود خصم ' + discount + '% على طلبك!';
+          document.getElementById('winNote').textContent = 'صور الكود بسرعة وابعت على 01050126822 — العرض ساري لمدة أسبوعين، أخر حد ' + expD + '/' + expM + '/' + expY;
+          document.getElementById('luckOverlay').classList.add('open');
         } else {
-          msg.className = 'luck-msg lose';
-          msg.textContent = '😞 للأسف ما كسبتش النهاردة. جرب بكرة!';
+          msg.className = 'luck-msg';
+          msg.innerHTML =
+            '<div class="luck-lose-card">' +
+              '<div class="luck-lose-icon">😞</div>' +
+              '<div class="luck-lose-txt">للأسف ما كسبتش النهاردة!</div>' +
+              '<div class="luck-lose-sub">جرب بكرة — كل 100 واحد بيكسب</div>' +
+              '<div class="luck-countdown">⏳ ' + formatRemaining(COOLDOWN) + ' وانته بتجرب تاني</div>' +
+            '</div>';
         }
         
         updateUI();
       });
+    });
+
+    // Win modal close
+    document.getElementById('winClose').addEventListener('click', function() {
+      document.getElementById('luckOverlay').classList.remove('open');
+    });
+    document.getElementById('luckOverlay').addEventListener('click', function(e) {
+      if (e.target === this) this.classList.remove('open');
     });
   </script>
 </body>
