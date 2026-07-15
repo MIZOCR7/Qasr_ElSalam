@@ -525,53 +525,65 @@
     /* ===== TRY YOUR LUCK ===== */
     .luck-section{text-align:center;padding:50px 20px;background:var(--charcoal-2)}
     .luck-section .luck-box{
-      max-width:550px;margin:0 auto;
+      max-width:520px;margin:0 auto;
       background:var(--charcoal-3);border:1px solid var(--border-med);
       border-radius:16px;padding:40px 30px;
     }
-    .luck-section .luck-box h3{font-size:1.3rem;color:#fff;margin-bottom:8px}
+    .luck-section .luck-box h3{font-size:1.4rem;color:#fff;margin-bottom:6px}
     .luck-section .luck-box p{color:var(--text-sec);font-size:0.9rem;margin-bottom:25px;line-height:1.7}
     .luck-section .luck-box .btn-luck{
       display:inline-flex;align-items:center;gap:10px;
-      padding:16px 38px;border:none;border-radius:50px;
-      font-family:var(--font-base);font-size:1.05rem;font-weight:700;cursor:pointer;
-      background:linear-gradient(135deg,var(--grill-red),#b91c1c);
-      color:#fff;transition:all 0.35s;position:relative;overflow:hidden;
+      padding:15px 40px;border:none;border-radius:0;
+      font-family:var(--font-base);font-size:1rem;font-weight:700;cursor:pointer;
+      background:var(--gold);color:var(--charcoal);
+      transition:all 0.35s;position:relative;overflow:hidden;
     }
-    .luck-section .luck-box .btn-luck:hover{transform:translateY(-3px);box-shadow:0 8px 30px rgba(220,38,38,0.35)}
-    .luck-section .luck-box .btn-luck:disabled{opacity:0.5;cursor:not-allowed;transform:none;box-shadow:none}
+    .luck-section .luck-box .btn-luck::before{
+      content:'';position:absolute;inset:0;
+      background:rgba(255,255,255,0.15);
+      transform:translateX(-100%);transition:transform 0.4s;
+    }
+    .luck-section .luck-box .btn-luck:hover::before{transform:translateX(0)}
+    .luck-section .luck-box .btn-luck:hover{transform:translateY(-2px);box-shadow:0 8px 30px rgba(212,160,38,0.3)}
+    .luck-section .luck-box .btn-luck:disabled{opacity:0.4;cursor:not-allowed;transform:none;box-shadow:none}
+    .luck-section .luck-box .btn-luck.loading{pointer-events:none;opacity:0.7}
+    .luck-section .luck-box .luck-msg{margin-top:16px;font-size:0.95rem;font-weight:700;min-height:28px;direction:rtl;transition:all 0.4s}
 
-    /* --- Luck result (inline) --- */
-    .luck-section .luck-box .luck-msg{margin-top:18px;font-size:0.95rem;font-weight:700;min-height:28px;direction:rtl;transition:all 0.4s}
-    .luck-section .luck-box .luck-msg.win{color:#22c55e}
-    .luck-section .luck-box .luck-msg.lose{color:var(--grill-red)}
-    .luck-section .luck-box .luck-msg.wait{color:var(--gold)}
+    /* --- Pulsing dots (suspense) --- */
+    .luck-dots{display:inline-flex;gap:6px;direction:ltr;margin-top:18px}
+    .luck-dots span{
+      width:10px;height:10px;border-radius:50%;
+      animation:dotPulse 1.2s ease-in-out infinite;
+    }
+    .luck-dots span:nth-child(1){background:var(--grill-red);animation-delay:0s}
+    .luck-dots span:nth-child(2){background:var(--gold);animation-delay:0.2s}
+    .luck-dots span:nth-child(3){background:var(--grill-red);animation-delay:0.4s}
+    @keyframes dotPulse{0%,100%{transform:scale(0.6);opacity:0.3}50%{transform:scale(1);opacity:1}}
+
+    /* --- Wait card (cooldown) --- */
     .luck-wait-card{
       display:flex;flex-direction:column;align-items:center;gap:6px;
-      margin-top:12px;padding:18px;background:rgba(212,160,38,0.06);
+      margin-top:8px;padding:18px;background:rgba(212,160,38,0.06);
       border:1px solid rgba(212,160,38,0.2);border-radius:12px;
     }
-    .luck-wait-card .luck-wait-icon{font-size:2.2rem;animation:waitSpin 2s linear infinite}
-    @keyframes waitSpin{0%{transform:rotate(0deg)}100%{transform:rotate(360deg)}}
-    .luck-wait-card .luck-wait-txt{color:var(--gold);font-size:1.1rem;font-weight:800}
-    .luck-wait-card .luck-wait-sub{color:var(--text-sec);font-size:0.82rem;font-weight:400}
-    .luck-wait-card .luck-wait-countdown{color:#fff;font-size:0.9rem;font-weight:700;margin-top:2px;direction:ltr;display:inline-block;background:rgba(0,0,0,0.3);padding:4px 14px;border-radius:20px;font-variant-numeric:tabular-nums}
+    .luck-wait-card .luck-wait-icon{font-size:2rem;animation:waitPulse 2s ease-in-out infinite}
+    @keyframes waitPulse{0%,100%{opacity:0.5}50%{opacity:1}}
+    .luck-wait-card .luck-wait-txt{color:var(--gold);font-size:1rem;font-weight:800}
+    .luck-wait-card .luck-wait-sub{color:var(--text-sec);font-size:0.8rem}
+    .luck-wait-card .luck-wait-countdown{color:#fff;font-size:1.4rem;font-weight:900;margin-top:6px;direction:ltr;display:inline-block;background:rgba(0,0,0,0.4);padding:8px 20px;border-radius:10px;font-variant-numeric:tabular-nums;letter-spacing:3px}
 
-
-    /* --- Lose slot-machine shake + card --- */
+    /* --- Lose card --- */
     .luck-lose-card{
       display:flex;flex-direction:column;align-items:center;gap:6px;
-      margin-top:12px;padding:18px;background:rgba(220,38,38,0.08);
-      border:1px solid rgba(220,38,38,0.25);border-radius:12px;
-      animation:loseShake 0.5s ease;
+      margin-top:8px;padding:18px;background:rgba(220,38,38,0.06);
+      border:1px solid rgba(220,38,38,0.2);border-radius:12px;
     }
-    @keyframes loseShake{0%,100%{transform:translateX(0)}20%{transform:translateX(-8px)}40%{transform:translateX(8px)}60%{transform:translateX(-6px)}80%{transform:translateX(6px)}}
-    .luck-lose-card .luck-lose-icon{font-size:2.4rem;opacity:0.6}
-    .luck-lose-card .luck-lose-txt{color:var(--grill-red);font-size:1.1rem;font-weight:800}
-    .luck-lose-card .luck-lose-sub{color:var(--text-sec);font-size:0.82rem;font-weight:400}
+    .luck-lose-card .luck-lose-icon{font-size:2.2rem;opacity:0.5}
+    .luck-lose-card .luck-lose-txt{color:var(--grill-red);font-size:1.05rem;font-weight:800}
+    .luck-lose-card .luck-lose-sub{color:var(--text-sec);font-size:0.82rem}
     .luck-lose-card .luck-countdown{color:var(--gold);font-size:0.85rem;font-weight:700;margin-top:2px}
 
-    /* --- Win modal overlay --- */
+    /* --- Win overlay --- */
     .luck-overlay{
       position:fixed;inset:0;z-index:9999;
       background:rgba(0,0,0,0.75);backdrop-filter:blur(6px);
@@ -580,63 +592,91 @@
     }
     .luck-overlay.open{opacity:1;visibility:visible}
 
-    /* Confetti particles */
+    /* --- Confetti --- */
     .confetti-container{position:fixed;inset:0;pointer-events:none;overflow:hidden;z-index:10000}
     .confetti{
-      position:absolute;width:10px;height:10px;top:-20px;
+      position:absolute;width:8px;height:8px;top:-16px;border-radius:2px;
       animation:confettiFall linear forwards;
     }
     @keyframes confettiFall{0%{transform:translateY(0) rotate(0deg);opacity:1}100%{transform:translateY(110vh) rotate(720deg);opacity:0}}
-    .confetti:nth-child(1){left:10%;background:var(--gold);width:8px;height:8px;animation-duration:3.2s;animation-delay:0s}
-    .confetti:nth-child(2){left:20%;background:#22c55e;width:6px;height:12px;animation-duration:2.8s;animation-delay:0.1s}
-    .confetti:nth-child(3){left:30%;background:var(--grill-red);width:10px;height:6px;animation-duration:3.5s;animation-delay:0.2s}
-    .confetti:nth-child(4){left:40%;background:#f59e0b;width:7px;height:7px;animation-duration:2.5s;animation-delay:0s}
-    .confetti:nth-child(5){left:50%;background:#fff;width:5px;height:10px;animation-duration:3.8s;animation-delay:0.3s}
-    .confetti:nth-child(6){left:60%;background:var(--gold);width:12px;height:6px;animation-duration:3s;animation-delay:0.15s}
-    .confetti:nth-child(7){left:70%;background:#22c55e;width:8px;height:8px;animation-duration:2.7s;animation-delay:0.4s}
-    .confetti:nth-child(8){left:80%;background:#ef4444;width:6px;height:10px;animation-duration:3.4s;animation-delay:0.05s}
-    .confetti:nth-child(9){left:25%;background:#f59e0b;width:9px;height:5px;animation-duration:3.1s;animation-delay:0.25s}
-    .confetti:nth-child(10){left:75%;background:#fff;width:7px;height:7px;animation-duration:2.9s;animation-delay:0.35s}
-    .confetti:nth-child(11){left:15%;background:var(--gold);width:11px;height:5px;animation-duration:3.6s;animation-delay:0.5s}
-    .confetti:nth-child(12){left:85%;background:#22c55e;width:6px;height:9px;animation-duration:2.6s;animation-delay:0.45s}
-    .confetti:nth-child(13){left:45%;background:var(--grill-red);width:8px;height:8px;animation-duration:3.3s;animation-delay:0.6s}
-    .confetti:nth-child(14){left:65%;background:#f59e0b;width:5px;height:11px;animation-duration:2.4s;animation-delay:0.55s}
-    .confetti:nth-child(15){left:5%;background:#fff;width:9px;height:6px;animation-duration:3.7s;animation-delay:0.7s}
-    .confetti:nth-child(16){left:90%;background:var(--gold);width:7px;height:7px;animation-duration:2.3s;animation-delay:0.65s}
+    .confetti:nth-child(1){left:8%;background:var(--gold);animation-duration:3.2s;animation-delay:0s}
+    .confetti:nth-child(2){left:18%;background:#22c55e;width:6px;height:10px;animation-duration:2.8s;animation-delay:0.1s}
+    .confetti:nth-child(3){left:28%;background:var(--grill-red);width:10px;height:6px;animation-duration:3.5s;animation-delay:0.2s}
+    .confetti:nth-child(4){left:38%;background:#f59e0b;animation-duration:2.5s;animation-delay:0s}
+    .confetti:nth-child(5){left:48%;background:#fff;width:6px;height:8px;animation-duration:3.8s;animation-delay:0.3s}
+    .confetti:nth-child(6){left:58%;background:var(--gold);width:10px;height:6px;animation-duration:3s;animation-delay:0.15s}
+    .confetti:nth-child(7){left:68%;background:#22c55e;animation-duration:2.7s;animation-delay:0.4s}
+    .confetti:nth-child(8){left:78%;background:#ef4444;width:6px;height:10px;animation-duration:3.4s;animation-delay:0.05s}
+    .confetti:nth-child(9){left:88%;background:#f59e0b;width:9px;height:5px;animation-duration:3.1s;animation-delay:0.25s}
+    .confetti:nth-child(10){left:96%;background:#fff;animation-duration:2.9s;animation-delay:0.35s}
 
-    /* Win modal card */
+    /* --- Win modal card --- */
     .luck-win-modal{
       position:relative;z-index:10001;
-      max-width:420px;width:90%;
+      max-width:400px;width:90%;
       background:linear-gradient(145deg,#1a1a1a,#2a1f0a);
-      border:2px solid var(--gold);border-radius:24px;
-      padding:40px 30px;text-align:center;direction:rtl;
-      box-shadow:0 0 60px rgba(212,160,38,0.3),inset 0 0 80px rgba(212,160,38,0.05);
+      border:2px solid var(--gold);border-radius:20px;
+      padding:36px 28px;text-align:center;direction:rtl;
+      box-shadow:0 0 60px rgba(212,160,38,0.25);
       animation:winPop 0.5s cubic-bezier(0.175,0.885,0.32,1.275);
     }
     @keyframes winPop{0%{transform:scale(0.3);opacity:0}100%{transform:scale(1);opacity:1}}
-    .luck-win-modal .win-trophy{font-size:4rem;display:block;margin-bottom:6px;animation:trophyBounce 1s ease infinite}
+    .luck-win-modal .win-trophy{font-size:4rem;display:block;margin-bottom:4px;animation:trophyBounce 1s ease infinite}
     @keyframes trophyBounce{0%,100%{transform:translateY(0)}50%{transform:translateY(-12px)}}
-    .luck-win-modal .win-title{font-size:1.7rem;font-weight:900;color:var(--gold);margin:8px 0 4px;}
-    .luck-win-modal .win-sub{color:var(--text-sec);font-size:0.95rem;margin-bottom:18px}
+    .luck-win-modal .win-title{font-size:1.6rem;font-weight:900;color:var(--gold);margin:6px 0 4px}
+    .luck-win-modal .win-sub{color:var(--text-sec);font-size:0.9rem;margin-bottom:16px}
     .luck-win-modal .win-code{
       display:inline-block;
-      background:linear-gradient(135deg,rgba(212,160,38,0.15),rgba(212,160,38,0.05));
-      border:2px dashed var(--gold);border-radius:12px;
-      padding:14px 36px;margin:6px 0 20px;
-      font-size:1.8rem;font-weight:900;color:var(--gold);
-      letter-spacing:3px;
+      background:rgba(212,160,38,0.1);border:2px dashed var(--gold);border-radius:12px;
+      padding:12px 32px;margin:4px 0 16px;
+      font-size:1.7rem;font-weight:900;color:var(--gold);letter-spacing:2px;
       animation:codePulse 1.5s ease infinite;
     }
-    @keyframes codePulse{0%,100%{box-shadow:0 0 10px rgba(212,160,38,0.2)}50%{box-shadow:0 0 30px rgba(212,160,38,0.5)}}
-    .luck-win-modal .win-note{color:var(--text-sec);font-size:0.8rem;margin-bottom:18px}
+    @keyframes codePulse{0%,100%{box-shadow:0 0 10px rgba(212,160,38,0.15)}50%{box-shadow:0 0 30px rgba(212,160,38,0.35)}}
+    .luck-win-modal .win-note{color:var(--text-sec);font-size:0.78rem;margin-bottom:16px}
     .luck-win-modal .win-close{
       display:inline-flex;align-items:center;gap:8px;
-      padding:10px 30px;border:1px solid var(--border-med);border-radius:50px;
-      background:transparent;color:#fff;font-size:0.9rem;font-weight:600;
+      padding:8px 28px;border:1px solid var(--border-med);border-radius:0;
+      background:transparent;color:#fff;font-size:0.85rem;font-weight:600;
       font-family:var(--font-base);cursor:pointer;transition:all 0.3s;
     }
-    .luck-win-modal .win-close:hover{background:rgba(255,255,255,0.08);border-color:var(--gold);color:var(--gold)}
+    .luck-win-modal .win-close:hover{background:rgba(255,255,255,0.06);color:var(--gold)}
+
+    /* --- Name input modal --- */
+    .name-modal{
+      position:relative;z-index:10001;
+      max-width:380px;width:90%;direction:rtl;
+      background:linear-gradient(145deg,#1a1a1a,#2a1f0a);
+      border:2px solid var(--gold);border-radius:24px;
+      padding:36px 28px;text-align:center;
+      box-shadow:0 0 60px rgba(212,160,38,0.25);
+      animation:winPop 0.4s cubic-bezier(0.175,0.885,0.32,1.275);
+    }
+    .name-modal .name-icon{font-size:3.6rem;display:block;margin-bottom:4px}
+    .name-modal .name-title{font-size:1.5rem;font-weight:900;color:var(--gold);margin-bottom:4px}
+    .name-modal .name-sub{color:var(--text-sec);font-size:0.9rem;margin-bottom:18px}
+    .name-modal .name-input{
+      width:100%;padding:14px 18px;border:2px solid var(--border-med);
+      border-radius:12px;background:var(--charcoal-3);color:#fff;
+      font-size:1rem;font-family:var(--font-base);text-align:center;
+      outline:none;transition:border-color 0.3s;box-sizing:border-box;
+    }
+    .name-modal .name-input:focus{border-color:var(--gold)}
+    .name-modal .name-input::placeholder{color:var(--text-sec);opacity:0.6}
+    .name-modal .name-err{color:var(--grill-red);font-size:0.82rem;min-height:22px;margin-top:6px;font-weight:600}
+    .name-modal .name-confirm{
+      display:inline-flex;align-items:center;gap:8px;
+      margin-top:14px;padding:14px 40px;border:none;border-radius:50px;
+      background:linear-gradient(135deg,var(--gold),#b8960f);color:var(--charcoal);
+      font-family:var(--font-base);font-size:1.05rem;font-weight:800;cursor:pointer;
+      transition:all 0.3s;
+    }
+    .name-modal .name-confirm:hover{transform:translateY(-2px);box-shadow:0 6px 30px rgba(212,160,38,0.35)}
+    @media(max-width:480px){
+      .name-modal{padding:28px 20px}
+      .name-modal .name-title{font-size:1.2rem}
+      .name-modal .name-input{padding:12px 14px}
+    }
 
     @media(max-width:480px){
       .luck-section{padding:30px 16px}.luck-section .luck-box{padding:30px 20px}
@@ -1405,7 +1445,7 @@
           <div class="loc-icon"><i class="fas fa-phone"></i></div>
           <div class="loc-text">
             <h4 data-i18n="contactCall">اتصل بنا</h4>
-            <p><a href="tel:01289696186">01289696186</a> &mdash; <a href="tel:01020081180">01020081180</a></p>
+            <p><a href="tel:01289696186">01289696186</a> &mdash; <a href="tel:01020081180">01020081180</a> <a href="https://wa.me/201020081180" target="_blank" style="color:#25D366;margin-right:6px;" title="واتساب"><i class="fab fa-whatsapp"></i></a></p>
           </div>
         </div>
         <div class="loc-detail">
@@ -1431,12 +1471,27 @@
   <!-- TRY YOUR LUCK -->
   <section class="luck-section">
     <div class="luck-box reveal">
-      <h3>🎡 جرب حظك واكسب خصم!</h3>
-      <p>اضغط على الزر وجرب حظك — ممكن تكسب خصم يصل إلى 40% على طلبك!<br>فرصة واحدة كل 24 ساعة</p>
-      <button class="btn-luck" id="luckBtn">🎰 جرب حظك</button>
+      <h3>🎁 جرب حظك واكسب خصم!</h3>
+      <p>اضغط على الزر وجرب حظك — ممكن تكسب خصم يصل إلى 20% على طلبك!<br>فرصة واحدة كل 24 ساعة</p>
+      <button class="btn-luck" id="luckBtn">🎁 جرب حظك</button>
+      <div class="luck-dots" id="luckDots" style="display:none">
+        <span></span><span></span><span></span>
+      </div>
       <div class="luck-msg" id="luckMsg"></div>
     </div>
   </section>
+
+  <!-- NAME INPUT MODAL -->
+  <div class="luck-overlay" id="nameOverlay">
+    <div class="name-modal">
+      <div class="name-icon">🏆</div>
+      <div class="name-title">مبروك! كسبت خصم!</div>
+      <div class="name-sub">دخل اسمك عشان تسجل الكود</div>
+      <input type="text" class="name-input" id="winnerNameInput" placeholder="الاسم بالكامل" maxlength="50" autocomplete="off">
+      <div class="name-err" id="nameErr"></div>
+      <button class="name-confirm" id="nameConfirm">تأكيد الفوز 🎉</button>
+    </div>
+  </div>
 
   <!-- WIN MODAL -->
   <div class="luck-overlay" id="luckOverlay">
@@ -1469,6 +1524,7 @@
     <p class="brand" data-i18n="brandName">قصر السلام للمشويات</p>
     <p data-i18n="footerAddress">مدينة السادات - المنطقة الثامنة - أمام محكمة الأسرة</p>
     <p style="margin-top:8px;" data-i18n="footerCopy">&copy; 2026 جميع الحقوق محفوظة</p>
+    <p style="margin-top:6px;"><a href="admin.html" style="color:var(--text-sec);font-size:0.78rem;text-decoration:none;opacity:0.4;">🔐 لوحة الإدارة</a></p>
   </footer>
 
   <!-- BACK TO TOP -->
@@ -1942,6 +1998,7 @@
     // Database References
     const counterRef = db.ref('clicks_counter');
     const menuRef = db.ref('menu');
+    const winnersRef = db.ref('winners');
 
     // --- Dynamic Menu Connection ---
     menuRef.once('value').then((snapshot) => {
@@ -1959,9 +2016,66 @@
       renderFullMenu(menuData.menu);
     });
 
+    // --- Sound effects ---
+    var audioCtx = null;
+    function getAudioCtx() {
+      if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      return audioCtx;
+    }
+    function playWinSound() {
+      try {
+        var ctx = getAudioCtx();
+        var notes = [523.25, 659.25, 783.99, 1046.5];
+        notes.forEach(function(freq, i) {
+          var osc = ctx.createOscillator();
+          var gain = ctx.createGain();
+          osc.type = 'sine'; osc.frequency.value = freq;
+          gain.gain.setValueAtTime(0.3, ctx.currentTime + i * 0.12);
+          gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + i * 0.12 + 0.3);
+          osc.connect(gain); gain.connect(ctx.destination);
+          osc.start(ctx.currentTime + i * 0.12); osc.stop(ctx.currentTime + i * 0.12 + 0.3);
+        });
+        // chord
+        [523.25, 659.25, 783.99].forEach(function(freq) {
+          var o = ctx.createOscillator(); var g = ctx.createGain();
+          o.type = 'sine'; o.frequency.value = freq;
+          g.gain.setValueAtTime(0.08, ctx.currentTime + 0.5);
+          g.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 1.2);
+          o.connect(g); g.connect(ctx.destination);
+          o.start(ctx.currentTime + 0.5); o.stop(ctx.currentTime + 1.2);
+        });
+      } catch(e) {}
+    }
+    function playLoseSound() {
+      try {
+        var ctx = getAudioCtx();
+        var notes = [400, 350, 300, 250];
+        notes.forEach(function(freq, i) {
+          var osc = ctx.createOscillator(); var gain = ctx.createGain();
+          osc.type = 'triangle'; osc.frequency.value = freq;
+          gain.gain.setValueAtTime(0.2, ctx.currentTime + i * 0.15);
+          gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + i * 0.15 + 0.25);
+          osc.connect(gain); gain.connect(ctx.destination);
+          osc.start(ctx.currentTime + i * 0.15); osc.stop(ctx.currentTime + i * 0.15 + 0.25);
+        });
+      } catch(e) {}
+    }
+    function playTickSound() {
+      try {
+        var ctx = getAudioCtx();
+        var o = ctx.createOscillator(); var g = ctx.createGain();
+        o.type = 'square'; o.frequency.value = 800;
+        g.gain.setValueAtTime(0.04, ctx.currentTime);
+        g.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.04);
+        o.connect(g); g.connect(ctx.destination);
+        o.start(ctx.currentTime); o.stop(ctx.currentTime + 0.04);
+      } catch(e) {}
+    }
+
     // --- Try Your Luck Logic ---
     const btn = document.getElementById('luckBtn');
     const msg = document.getElementById('luckMsg');
+    const dots = document.getElementById('luckDots');
     const LS_KEY = 'luck_last_click';
     const COOLDOWN = 24 * 60 * 60 * 1000; // 24 hours
 
@@ -1973,9 +2087,11 @@
     }
 
     function formatRemaining(ms) {
-      var h = Math.floor(ms / 3600000);
-      var m = Math.floor((ms % 3600000) / 60000);
-      return h + ' ساعة و ' + m + ' دقيقة';
+      var total = Math.max(0, ms);
+      var h = Math.floor(total / 3600000);
+      var m = Math.floor((total % 3600000) / 60000);
+      var s = Math.floor((total % 60000) / 1000);
+      return String(h).padStart(2,'0') + ':' + String(m).padStart(2,'0') + ':' + String(s).padStart(2,'0');
     }
 
     function resetCooldown() {
@@ -1992,7 +2108,7 @@
           '<div class="luck-wait-card">' +
             '<div class="luck-wait-icon">⏳</div>' +
             '<div class="luck-wait-txt">مع الأسف، خلصت محاولتك!</div>' +
-            '<div class="luck-wait-sub">جرب تاني بعد ما الساعة تخلص</div>' +
+            '<div class="luck-wait-sub">جرب تاني بعد ما العداد يخلص</div>' +
             '<div class="luck-wait-countdown">' + formatRemaining(remaining) + '</div>' +
           '</div>';
       } else {
@@ -2002,9 +2118,24 @@
       }
     }
 
-    // Run initial check and refresh every minute
+    // Run initial check and refresh every second
     updateUI();
-    setInterval(updateUI, 60000);
+    setInterval(updateUI, 1000);
+
+    function showLoading() {
+      btn.classList.add('loading');
+      btn.textContent = 'جاري التحقق...';
+      dots.style.display = 'inline-flex';
+      msg.innerHTML = '';
+      var tickInterval = setInterval(playTickSound, 250);
+      return tickInterval;
+    }
+    function hideLoading(tickInterval) {
+      clearInterval(tickInterval);
+      btn.classList.remove('loading');
+      btn.innerHTML = '🎁 جرب حظك';
+      dots.style.display = 'none';
+    }
 
     btn.addEventListener('click', function() {
       var remaining = checkCoolDown();
@@ -2014,14 +2145,23 @@
       }
 
       btn.disabled = true;
-      msg.textContent = '🔄 جاري تجربة الحظ...';
+      var tickInterval = showLoading();
 
       // Atomic counter increment to handle concurrent users
       counterRef.transaction(function(current) {
         return (current || 0) + 1;
       }, function(err, committed, snap) {
-        if (err || !committed) {
-          msg.className = 'luck-msg lose';
+        if (err) {
+          console.error('Firebase transaction error:', err);
+          hideLoading(tickInterval);
+          msg.className = 'luck-msg';
+          msg.innerHTML = '<div class="luck-lose-card"><div class="luck-lose-icon">❌</div><div class="luck-lose-txt">حصل خطأ في الاتصال</div><div class="luck-lose-sub">تأكد من إنشاء قاعدة البيانات في Firebase</div></div>';
+          btn.disabled = false;
+          return;
+        }
+        if (!committed) {
+          hideLoading(tickInterval);
+          msg.className = 'luck-msg';
           msg.textContent = '❌ حصل خطأ، حاول مرة أخرى';
           btn.disabled = false;
           return;
@@ -2029,37 +2169,79 @@
         
         var count = snap.val();
         localStorage.setItem(LS_KEY, String(Date.now())); // Start cooldown
-        
-        if (count % 100 === 0) {
-          var chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
-          var rand = '';
-          for (var i = 0; i < 4; i++) rand += chars[Math.floor(Math.random() * chars.length)];
-          var now = new Date();
-          var dd = String(now.getDate()).padStart(2,'0');
-          var mm = String(now.getMonth()+1).padStart(2,'0');
-          var yyyy = now.getFullYear();
-          var exp = new Date(now.getTime() + 7 * 24 * 60 * 60 * 1000);
-          var expD = String(exp.getDate()).padStart(2,'0');
-          var expM = String(exp.getMonth()+1).padStart(2,'0');
-          var expY = exp.getFullYear();
-          var discount = Math.floor(Math.random() * 31) + 10;
-          document.getElementById('winCode').textContent = rand + '-' + dd + '-' + mm + '-' + yyyy;
-          document.getElementById('winSub').textContent = '🎉 كسبت كود خصم ' + discount + '% على طلبك!';
-          document.getElementById('winNote').textContent = 'صور الكود بسرعة وابعت على 01050126822 — العرض ساري لمدة أسبوعين، أخر حد ' + expD + '/' + expM + '/' + expY;
-          document.getElementById('luckOverlay').classList.add('open');
-        } else {
-          msg.className = 'luck-msg';
-          msg.innerHTML =
-            '<div class="luck-lose-card">' +
-              '<div class="luck-lose-icon">😞</div>' +
-              '<div class="luck-lose-txt">للأسف ما كسبتش النهاردة!</div>' +
-              '<div class="luck-lose-sub">جرب بكرة — كل 100 واحد بيكسب</div>' +
-              '<div class="luck-countdown">⏳ ' + formatRemaining(COOLDOWN) + ' وانته بتجرب تاني</div>' +
-            '</div>';
-        }
-        
-        updateUI();
+        var isWin = (count % 100 === 0);
+
+        // GENERATE COUPON DATA
+        var chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+        var rand = '';
+        for (var i = 0; i < 4; i++) rand += chars[Math.floor(Math.random() * chars.length)];
+        var now = new Date();
+        var dd = String(now.getDate()).padStart(2,'0');
+        var mm = String(now.getMonth()+1).padStart(2,'0');
+        var yyyy = now.getFullYear();
+        var exp = new Date(now.getTime() + 7 * 24 * 60 * 60 * 1000);
+        var expD = String(exp.getDate()).padStart(2,'0');
+        var expM = String(exp.getMonth()+1).padStart(2,'0');
+        var expY = exp.getFullYear();
+        var discount = Math.floor(Math.random() * 11) + 10;
+        var code = rand + '-' + dd + '-' + mm + '-' + yyyy;
+        var dateStr = dd + '/' + mm + '/' + yyyy;
+        var expStr = expD + '/' + expM + '/' + expY;
+
+        // SUSPENSE DELAY then reveal
+        setTimeout(function() {
+          hideLoading(tickInterval);
+          if (isWin) {
+            playWinSound();
+            window._pendingCoupon = { code: code, discount: discount, date: dateStr, expiry: expStr, timestamp: now.getTime() };
+            document.getElementById('winnerNameInput').value = '';
+            document.getElementById('nameErr').textContent = '';
+            document.getElementById('nameOverlay').classList.add('open');
+            document.getElementById('winnerNameInput').focus();
+          } else {
+            playLoseSound();
+            msg.className = 'luck-msg';
+            msg.innerHTML =
+              '<div class="luck-lose-card">' +
+                '<div class="luck-lose-icon">😞</div>' +
+                '<div class="luck-lose-txt">للأسف ما كسبتش النهاردة!</div>' +
+                '<div class="luck-lose-sub">جرب بكرة — كل 100 واحد بيكسب</div>' +
+                '<div class="luck-countdown">⏳ ' + formatRemaining(COOLDOWN) + ' وانته بتجرب تاني</div>' +
+              '</div>';
+            updateUI();
+          }
+        }, 2200);
       });
+    });
+
+    // Name confirm
+    document.getElementById('nameConfirm').addEventListener('click', function() {
+      var name = document.getElementById('winnerNameInput').value.trim();
+      if (!name) {
+        document.getElementById('nameErr').textContent = 'من فضلك ادخل اسمك';
+        return;
+      }
+      var c = window._pendingCoupon;
+      if (!c) return;
+      winnersRef.push({
+        name: name,
+        code: c.code,
+        discount: c.discount,
+        date: c.date,
+        expiry: c.expiry,
+        timestamp: c.timestamp
+      });
+      counterRef.set(0); // reset counter after win
+      document.getElementById('nameOverlay').classList.remove('open');
+      document.getElementById('winCode').textContent = c.code;
+      document.getElementById('winSub').textContent = '🎉 كسبت كود خصم ' + c.discount + '% على طلبك!';
+      document.getElementById('winNote').textContent = 'صور الكود بسرعة وابعت على 01050126822 — العرض ساري لمدة أسبوع، أخر حد ' + c.expiry;
+      document.getElementById('luckOverlay').classList.add('open');
+      window._pendingCoupon = null;
+    });
+    // Name input Enter key
+    document.getElementById('winnerNameInput').addEventListener('keydown', function(e) {
+      if (e.key === 'Enter') document.getElementById('nameConfirm').click();
     });
 
     // Win modal close
@@ -2067,7 +2249,9 @@
       document.getElementById('luckOverlay').classList.remove('open');
     });
     document.getElementById('luckOverlay').addEventListener('click', function(e) {
-      if (e.target === this) this.classList.remove('open');
+      if (e.target === this) {
+        this.classList.remove('open');
+      }
     });
   </script>
 </body>

@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>الإدارة — قصر السلام</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Tajawal:wght@400;600;700;800;900&display=swap');
+  :root{
+    --charcoal:#111;--charcoal-2:#1a1a1a;--charcoal-3:#222;
+    --gold:#d4a026;--gold-light:#e8b832;
+    --grill-red:#dc2626;--text-pri:#f5f5f5;--text-sec:#aaa;
+    --border-med:#333;--font-base:'Tajawal',sans-serif;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{
+    font-family:var(--font-base);background:var(--charcoal);color:var(--text-pri);
+    min-height:100vh;display:flex;align-items:center;justify-content:center;
+  }
+  a{color:var(--gold);text-decoration:none}
+
+  /* LOGIN */
+  .login-box{
+    max-width:360px;width:90%;background:var(--charcoal-2);
+    border:1px solid var(--border-med);border-radius:16px;
+    padding:40px 28px;text-align:center;
+  }
+  .login-box .lock-icon{font-size:2.8rem;margin-bottom:6px}
+  .login-box h1{font-size:1.4rem;color:var(--gold);margin-bottom:4px}
+  .login-box p{color:var(--text-sec);font-size:0.85rem;margin-bottom:20px}
+  .login-box input{
+    width:100%;padding:12px 16px;margin-bottom:10px;border:1px solid var(--border-med);
+    border-radius:10px;background:var(--charcoal-3);color:#fff;
+    font-family:var(--font-base);font-size:0.95rem;text-align:center;
+    outline:none;transition:border-color 0.3s;box-sizing:border-box;
+  }
+  .login-box input:focus{border-color:var(--gold)}
+  .login-box .login-err{color:var(--grill-red);font-size:0.82rem;min-height:22px;margin:4px 0 10px}
+  .login-box button{
+    width:100%;padding:12px;border:none;border-radius:10px;
+    background:linear-gradient(135deg,var(--gold),#b8960f);color:var(--charcoal);
+    font-family:var(--font-base);font-size:1rem;font-weight:800;cursor:pointer;
+    transition:all 0.3s;
+  }
+  .login-box button:hover{transform:translateY(-1px);box-shadow:0 4px 20px rgba(212,160,38,0.3)}
+
+  /* DASHBOARD */
+  .dashboard{display:none;width:100%;max-width:1100px;padding:30px 20px;direction:rtl}
+  .dashboard.show{display:block}
+  .dash-header{
+    display:flex;justify-content:space-between;align-items:center;
+    flex-wrap:wrap;gap:12px;margin-bottom:24px;
+  }
+  .dash-header h1{font-size:1.5rem;color:var(--gold)}
+  .dash-header h1 span{color:var(--text-sec);font-size:0.9rem;font-weight:400}
+  .dash-header .logout{
+    padding:8px 20px;border:1px solid var(--border-med);border-radius:8px;
+    background:transparent;color:var(--text-sec);font-family:var(--font-base);
+    font-size:0.85rem;cursor:pointer;transition:all 0.3s;
+  }
+  .dash-header .logout:hover{border-color:var(--grill-red);color:var(--grill-red)}
+  .dash-stats{
+    display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;
+    margin-bottom:24px;
+  }
+  .dash-stats .stat-card{
+    background:var(--charcoal-2);border:1px solid var(--border-med);
+    border-radius:10px;padding:16px;text-align:center;
+  }
+  .dash-stats .stat-card .num{font-size:1.8rem;font-weight:900;color:var(--gold)}
+  .dash-stats .stat-card .lbl{font-size:0.78rem;color:var(--text-sec);margin-top:2px}
+  .dash-table-wrap{overflow-x:auto;border-radius:10px;border:1px solid var(--border-med)}
+  .dash-table{
+    width:100%;border-collapse:collapse;font-size:0.85rem;
+  }
+  .dash-table th{
+    background:var(--charcoal-3);color:var(--gold);padding:12px 14px;
+    text-align:center;font-weight:700;white-space:nowrap;
+  }
+  .dash-table td{
+    padding:10px 14px;text-align:center;border-top:1px solid var(--border-med);
+    color:var(--text-pri);
+  }
+  .dash-table tr:hover td{background:rgba(212,160,38,0.04)}
+  .dash-table .code-cell{font-weight:700;color:var(--gold);font-size:0.9rem;letter-spacing:1px}
+  .dash-table .disc-badge{
+    display:inline-block;background:rgba(212,160,38,0.12);color:var(--gold);
+    padding:2px 10px;border-radius:20px;font-weight:700;font-size:0.8rem;
+  }
+  .dash-table .empty-msg{text-align:center;padding:40px;color:var(--text-sec)}
+  .dash-loading{text-align:center;padding:40px;color:var(--text-sec)}
+  @media(max-width:600px){
+    .dash-table{font-size:0.75rem}
+    .dash-table th,.dash-table td{padding:8px 6px}
+    .dash-header h1{font-size:1.1rem}
+  }
+</style>
+</head>
+<body>
+
+<!-- LOGIN -->
+<div class="login-box" id="loginBox">
+  <div class="lock-icon">🔐</div>
+  <h1>لوحة الإدارة</h1>
+  <p>قصر السلام للمشويات</p>
+  <input type="text" id="loginUser" placeholder="اسم المستخدم" autocomplete="off">
+  <input type="password" id="loginPass" placeholder="كلمة السر">
+  <div class="login-err" id="loginErr"></div>
+  <button onclick="doLogin()">دخول</button>
+</div>
+
+<!-- DASHBOARD -->
+<div class="dashboard" id="dashboard">
+  <div class="dash-header">
+    <h1>🏆 الفائزون <span>| قصر السلام</span></h1>
+    <div>
+      <button class="logout" onclick="doLogout()">🚪 خروج</button>
+    </div>
+  </div>
+  <div class="dash-stats">
+    <div class="stat-card"><div class="num" id="totalWinners">0</div><div class="lbl">إجمالي الفائزين</div></div>
+    <div class="stat-card"><div class="num" id="totalDiscounts">0</div><div class="lbl">إجمالي الخصومات</div></div>
+  </div>
+  <div class="dash-table-wrap">
+    <table class="dash-table">
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>الاسم</th>
+          <th>كود الخصم</th>
+          <th>الخصم</th>
+          <th>تاريخ الفوز</th>
+          <th>آخر صلاحية</th>
+        </tr>
+      </thead>
+      <tbody id="winnersBody">
+        <tr><td colspan="6" class="dash-loading">جاري التحميل...</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
+<script>
+  firebase.initializeApp({
+    apiKey: "AIzaSyC7yHaTmGu1AL4NuX9l9Lk0GEl2w7gVQXY",
+    authDomain: "resturant-c6b42.firebaseapp.com",
+    databaseURL: "https://resturant-c6b42-default-rtdb.firebaseio.com",
+    projectId: "resturant-c6b42",
+    storageBucket: "resturant-c6b42.firebasestorage.app",
+    messagingSenderId: "818970408570",
+    appId: "1:818970408570:web:3f7fe071404153a4682dc3"
+  });
+
+  var db = firebase.database();
+  var winnersRef = db.ref('winners');
+  var loggedIn = false;
+
+  function doLogin() {
+    var user = document.getElementById('loginUser').value.trim();
+    var pass = document.getElementById('loginPass').value;
+    if (user === 'admin' && pass === '12345678') {
+      loggedIn = true;
+      document.getElementById('loginBox').style.display = 'none';
+      document.getElementById('dashboard').classList.add('show');
+      loadWinners();
+    } else {
+      document.getElementById('loginErr').textContent = 'اسم المستخدم أو كلمة السر خطأ';
+    }
+  }
+
+  document.getElementById('loginPass').addEventListener('keydown', function(e) {
+    if (e.key === 'Enter') doLogin();
+  });
+  document.getElementById('loginUser').addEventListener('keydown', function(e) {
+    if (e.key === 'Enter') document.getElementById('loginPass').focus();
+  });
+
+  function doLogout() {
+    loggedIn = false;
+    document.getElementById('dashboard').classList.remove('show');
+    document.getElementById('loginBox').style.display = 'block';
+    document.getElementById('loginUser').value = '';
+    document.getElementById('loginPass').value = '';
+    document.getElementById('loginErr').textContent = '';
+  }
+
+  function loadWinners() {
+    var tbody = document.getElementById('winnersBody');
+    winnersRef.orderByChild('timestamp').once('value').then(function(snap) {
+      var data = [];
+      snap.forEach(function(child) {
+        data.push(child.val());
+      });
+      data.reverse();
+      if (!data.length) {
+        tbody.innerHTML = '<tr><td colspan="6" class="empty-msg">لا يوجد فائزون حتى الآن</td></tr>';
+        document.getElementById('totalWinners').textContent = '0';
+        document.getElementById('totalDiscounts').textContent = '0';
+        return;
+      }
+      var totalDiscount = 0;
+      var rows = '';
+      data.forEach(function(w, i) {
+        totalDiscount += w.discount || 0;
+        rows +=
+          '<tr>' +
+            '<td>' + (i + 1) + '</td>' +
+            '<td>' + (w.name || '—') + '</td>' +
+            '<td class="code-cell">' + (w.code || '—') + '</td>' +
+            '<td><span class="disc-badge">' + (w.discount || 0) + '%</span></td>' +
+            '<td>' + (w.date || '—') + '</td>' +
+            '<td>' + (w.expiry || '—') + '</td>' +
+          '</tr>';
+      });
+      tbody.innerHTML = rows;
+      document.getElementById('totalWinners').textContent = data.length;
+      document.getElementById('totalDiscounts').textContent = totalDiscount + '%';
+    }).catch(function() {
+      tbody.innerHTML = '<tr><td colspan="6" class="empty-msg" style="color:var(--grill-red)">❌ خطأ في تحميل البيانات</td></tr>';
+    });
+  }
+</script>
+</body>
+</html>
