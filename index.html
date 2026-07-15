@@ -2246,6 +2246,7 @@
     document.getElementById('luckOverlay').addEventListener('click', function(e) {
       if (e.target === this) this.classList.remove('open');
     });
+    window.addEventListener('beforeunload', function() { firebase.database().goOffline(); });
   </script>
 </body>
 </html>
