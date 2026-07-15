@@ -508,17 +508,7 @@
     footer .brand{color:var(--gold);font-weight:700;font-size:1rem;margin-bottom:5px}
     footer p{color:var(--text-muted);font-size:0.82rem;line-height:1.7}
 
-    /* ===== WHATSAPP FLOAT ===== */
-    .wa-float{
-      position:fixed;bottom:20px;left:20px;z-index:999;
-      width:52px;height:52px;background:#25d366;
-      border-radius:50%;display:flex;align-items:center;justify-content:center;
-      color:#fff;font-size:1.5rem;text-decoration:none;
-      box-shadow:0 4px 20px rgba(37,211,102,0.35);transition:all 0.3s;
-      animation:pulseGreen 2.5s ease-in-out infinite;
-    }
-    @keyframes pulseGreen{0%,100%{box-shadow:0 4px 20px rgba(37,211,102,0.35)}50%{box-shadow:0 4px 35px rgba(37,211,102,0.6)}}
-    .wa-float:hover{transform:scale(1.1)}
+
 
     /* ===== BACK TO TOP ===== */
     .back-top{
@@ -1266,9 +1256,7 @@
           <a href="tel:01289696186" class="btn btn-primary">
             <i class="fas fa-truck"></i> <span data-i18n="ctaBtn1">اطلب دليفري الآن</span>
           </a>
-          <a href="https://wa.me/201289696186" target="_blank" class="btn btn-gold">
-            <i class="fab fa-whatsapp"></i> <span data-i18n="ctaBtn2">واتساب</span>
-          </a>
+
         </div>
       </div>
     </div>
@@ -1303,9 +1291,7 @@
           </div>
         </div>
         <div class="loc-cta">
-          <a href="https://wa.me/201289696186" target="_blank" class="btn btn-gold">
-            <i class="fab fa-whatsapp"></i> <span data-i18n="locWhatsapp">راسلنا على واتساب</span>
-          </a>
+
         </div>
       </div>
       <div class="location-map reveal-right">
@@ -1320,7 +1306,7 @@
   <!-- FOOTER -->
   <footer>
     <div class="social-links">
-      <a href="https://wa.me/201289696186" target="_blank" aria-label="واتساب"><i class="fab fa-whatsapp"></i></a>
+
       <a href="tel:01289696186" aria-label="اتصال"><i class="fas fa-phone"></i></a>
       <a href="https://www.facebook.com/kasr.alsalamm" target="_blank" aria-label="فيسبوك"><i class="fab fa-facebook-f"></i></a>
       <a href="https://www.instagram.com/kasrel.sallam" target="_blank" aria-label="انستجرام"><i class="fab fa-instagram"></i></a>
@@ -1329,11 +1315,6 @@
     <p data-i18n="footerAddress">مدينة السادات - المنطقة الثامنة - أمام محكمة الأسرة</p>
     <p style="margin-top:8px;" data-i18n="footerCopy">&copy; 2026 جميع الحقوق محفوظة</p>
   </footer>
-
-  <!-- WHATSAPP FLOAT -->
-  <a href="https://wa.me/201289696186" target="_blank" class="wa-float" aria-label="واتساب">
-    <i class="fab fa-whatsapp"></i>
-  </a>
 
   <!-- BACK TO TOP -->
   <a href="#hero" class="back-top" id="backTop">
@@ -1391,12 +1372,12 @@
         daySat: 'السبت', daySun: 'الأحد', dayMon: 'الإثنين', dayTue: 'الثلاثاء', dayWed: 'الأربعاء', dayThu: 'الخميس', dayFri: 'الجمعة',
         hoursAll: '24 ساعة',
         ctaTitle: 'جاعان؟ احنا موجودين!', ctaDesc: 'اطلب دلوقتي واستمتع بأشهي المشويات الفاخرة في مدينة السادات',
-        ctaBtn1: 'اطلب دليفري الآن', ctaBtn2: 'واتساب',
+        ctaBtn1: 'اطلب دليفري الآن',
         locTitle: 'موقع <span class="gold">قصر السلام</span>',
         locSub: 'تعالوا جربوا طعم المشويات الفاخرة عندنا في مدينة السادات',
         locAddress: 'مدينة السادات - المنطقة الثامنة<br>أمام محكمة الأسرة',
         locHours: '24 ساعة &mdash; كل يوم',
-        locWhatsapp: 'كلمنا على واتساب',
+
         footerAddress: 'مدينة السادات - المنطقة الثامنة - أمام محكمة الأسرة',
         footerCopy: '&copy; 2026 جميع الحقوق محفوظة',
         menuCat1: 'الولائم والمناسبات', menuCat2: 'الساندوتشات', menuCat3: 'السلطات',
@@ -1451,12 +1432,11 @@
         daySat: 'Saturday', daySun: 'Sunday', dayMon: 'Monday', dayTue: 'Tuesday', dayWed: 'Wednesday', dayThu: 'Thursday', dayFri: 'Friday',
         hoursAll: '24 Hours',
         ctaTitle: 'Hungry? We Are Here!', ctaDesc: 'Order now and enjoy the finest grilled meats in Sadat City',
-        ctaBtn1: 'Order Delivery', ctaBtn2: 'WhatsApp',
+        ctaBtn1: 'Order Delivery', 
         locTitle: '<span class="gold">Qasr El Salam</span> Location',
         locSub: 'Come and taste the finest grilled meats at our location in Sadat City',
         locAddress: 'Sadat City - District 8<br>In front of Family Court',
         locHours: '24 Hours &mdash; Every Day',
-        locWhatsapp: 'Message us on WhatsApp',
         locBadge: 'Sadat City - District 8',
         footerAddress: 'Sadat City - District 8 - In front of Family Court',
         footerCopy: '&copy; 2026 All Rights Reserved',
@@ -1591,15 +1571,15 @@
 
     // ===== MENU =====
     const menuItems = [
-      { name: 'كباب وكفتة على الفحم', desc: 'أشهي كباب وكفتة بلدي محضرة علي الفحم بتوابل قصر السلام السرية', img: 'assets/food/1.jpg', tag: 'الأكثر طلباً' },
-      { name: 'حمام محشي', desc: 'حمام محشي بالأرز والفريك بتتبيلة خاصة', img: 'assets/food/2.jpg', tag: 'خاص' },
-      { name: 'طواجن', desc: 'تشكيلة طواجن شرقية بالفرن', img: 'assets/food/3.jpg', tag: 'مشاوي' },
-      { name: 'شوربة لسان عصفور', desc: 'شوربة لسان عصفور شهية ومحضرة بأجود المكونات', img: 'assets/food/4.jpg', tag: 'مقبلات' },
-      { name: 'ميكس مشاوي عائلي', desc: 'تشكيلة مشاوي كاملة تناسب العزومات الكبيرة', img: 'assets/food/5.jpg', tag: 'عائلي' },
-      { name: 'كفتة مشوية', desc: 'كفتة اللحم البلدي بتوابل خاصة', img: 'assets/food/6.jpg', tag: 'مشاوي' },
-      { name: 'أرز مندي', desc: 'أرز مندي فاخر مع اللحم', img: 'assets/food/7.jpg', tag: 'أطباق' },
-      { name: 'دجاج مشوي', desc: 'دجاج بلدي مشوي علي الفحم', img: 'assets/food/8.jpg', tag: 'مشاوي' },
-      { name: 'سلطات ومقبلات', desc: 'تشكيلة سلطات ومقبلات شرقية طازجة', img: 'assets/food/9.jpg', tag: 'سلطات' }
+      { name: 'طاجن لحم بالخضار', desc: 'بامية او فاصوليا او مشكل او بطاطس', img: 'assets/food/1.jpg', tag: 'طواجن' },
+      { name: 'طاجن كوارع', desc: 'طاجن كوارع بالمرق الغني', img: 'assets/food/2.jpg', tag: 'طواجن' },
+      { name: 'اسباجتي لحم', desc: 'اسباجتي باللحم المفروم والصوص الأحمر', img: 'assets/food/3.jpg', tag: 'مكرونة' },
+      { name: 'ريش ضاني', desc: 'ريش ضاني مشوي على الفحم', img: 'assets/food/4.jpg', tag: 'لحوم' },
+      { name: 'ديك رومي مشوي', desc: 'ديك رومي كامل مشوي بالفرن بالتتبيلة الخاصة', img: 'assets/food/5.jpg', tag: 'رئيسية' },
+      { name: 'حمام محشي', desc: 'فرد حمام محشي - ربع فرخه - تمن كفته - ارز بسمتي', img: 'assets/food/6.jpg', tag: 'رئيسية' },
+      { name: 'صينية العائلة الوسط', desc: 'نص كفتة - فرخة شيش - ثلث كباب - ربع طرب - ارز معمر - ملوخية', img: 'assets/food/7.jpg', tag: 'ولائم' },
+      { name: 'صينية العائلة الكبيرة', desc: 'كيلو كفتة - فرخة ونص شيش - 3/4 كباب - ربع طرب - ارز معمر - ملوخية', img: 'assets/food/8.jpg', tag: 'ولائم' },
+      { name: 'مشكل كباب وكفتة', desc: 'تشكيلة من الكباب والكفتة المشوية', img: 'assets/food/9.jpg', tag: 'لحوم' }
     ];
     const mGrid = document.getElementById('menuGrid');
     menuItems.forEach((item, idx) => {
