@@ -2010,18 +2010,6 @@
     }).catch(function() {
       renderFullMenu(menuData.menu);
     });
-          renderFullMenu(remoteMenuData);
-        } else {
-          // Fallback to local hardcoded data
-          renderFullMenu(menuData.menu);
-          // Optional: Seed your database by uncommenting the line below
-          // menuRef.set(menuData.menu);
-        }
-      }).catch((err) => {
-        console.error("Database connection failed. Falling back to local menu:", err);
-        renderFullMenu(menuData.menu);
-      });
-    });
 
     // --- Sound effects ---
     var audioCtx = null;
