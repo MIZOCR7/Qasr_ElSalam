@@ -411,8 +411,8 @@
     /* ===== TESTIMONIALS ===== */
     .testimonials{
       position:relative;
-      background:url('assets/images/resturant-image.jpg') center/100% auto no-repeat;
-      transition:background-size 0.1s linear;
+      background:url('assets/images/resturant-image.jpg') center/cover no-repeat;
+      background-attachment:fixed;
     }
     .testimonials::before{
       content:'';position:absolute;inset:0;
@@ -729,6 +729,7 @@
     .videos-grid{
       display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));
       gap:20px;margin-top:40px;
+      justify-content:center;justify-items:center;
     }
     .videos-grid .vid-card{
       position:relative;overflow:hidden;border-radius:12px;
@@ -921,6 +922,9 @@
       .menu-grid{grid-template-columns:1fr}
       .gallery-grid{grid-template-columns:1fr}
       .stats-grid{grid-template-columns:1fr}
+      .videos-grid{grid-template-columns:1fr;justify-items:center}
+      .videos-grid .vid-card{max-width:320px;width:100%}
+      .testimonials{background-attachment:scroll}
     }
   </style>
 </head>
@@ -1505,16 +1509,7 @@
       navbar.classList.toggle('scrolled', window.scrollY > 70);
       const backTop = document.getElementById('backTop');
       if (backTop) backTop.classList.toggle('visible', window.scrollY > 500);
-      const testi = document.querySelector('.testimonials');
-      if (testi) {
-        var r = testi.getBoundingClientRect();
-        var vh = window.innerHeight;
-        var progress = 1 - Math.min(Math.max(r.top / vh, 0), 1);
-        if (progress > 0 && progress < 1) {
-          var scale = 100 + progress * 15;
-          testi.style.backgroundSize = scale + '% auto';
-        }
-      }
+
     });
 
     // ===== MOBILE NAV =====
